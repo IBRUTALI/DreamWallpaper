@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.example.dreamwallpaper.screens.main.MainFragment"
+        android:label="Категории"
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainFragment_to_imageListFragment"
+            app:destination="@id/imageListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/imageListFragment"
+        android:name="com.example.dreamwallpaper.screens.image_list.ImageListFragment"
+        android:label="Обои"
+        tools:layout="@layout/fragment_image_list" >
+        <action
+            android:id="@+id/action_imageListFragment_to_imageFragment"
+            app:destination="@id/imageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/imageFragment"
+        android:name="com.example.dreamwallpaper.screens.image.ImageFragment"
+        tools:layout="@layout/fragment_image" />
+</navigation>

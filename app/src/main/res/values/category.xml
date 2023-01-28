@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="category">
+        <item>nature</item>
+        <item>fashion</item>
+        <item>backgrounds</item>
+        <item>science</item>
+        <item>places</item>
+        <item>animals</item>
+        <item>sports</item>
+    </string-array>
+
+</resources>

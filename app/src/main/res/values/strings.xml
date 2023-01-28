@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">DreamWallpaper</string>
+    <string name="set_image_as_wallpaper">Установить изображение как обои?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="app_name_lines_2">Dream \nWallpaper</string>
+</resources>
