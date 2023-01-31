@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.DecodeFormat
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
@@ -59,6 +60,7 @@ class ImageListAdapter: RecyclerView.Adapter<ImageListAdapter.ImageViewHolder>()
 
             Glide.with(MAIN)
                 .load(imageList[position].webformatURL)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .centerCrop()
                 .placeholder(null)
                 .listener(requestListener)

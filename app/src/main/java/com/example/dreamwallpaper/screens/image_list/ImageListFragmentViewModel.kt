@@ -19,12 +19,15 @@ import retrofit2.Response
 class ImageListFragmentViewModel(application: Application) : AndroidViewModel(application) {
 
     val imageList: MutableLiveData<Response<Image>> = MutableLiveData()
+    val pageLiveData: MutableLiveData<Int> = MutableLiveData()
     val state = MutableLiveData(String())
     private val repository = Singletons.imagesRepository
 
     fun getImagesByCategory(category: String, page: Int) {
+        Log.d("!@#", "Request")
         viewModelScope.launch {
             try {
+                pageLiveData.value = page
                 imageList.value = repository.getImagesByCategory(category = category, page = page)
                 state.value = null
             } catch (e: BackendException) {

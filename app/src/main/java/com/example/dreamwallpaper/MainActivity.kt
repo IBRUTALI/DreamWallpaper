@@ -8,6 +8,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.Glide
 import com.example.dreamwallpaper.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -33,5 +34,6 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         mBinding = null
+        Glide.get(applicationContext).clearMemory()
     }
 }
