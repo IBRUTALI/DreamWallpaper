@@ -1,12 +1,12 @@
 package com.example.dreamwallpaper.screens.splash
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.dreamwallpaper.MainActivity
+import androidx.navigation.findNavController
+import com.example.dreamwallpaper.R
 import com.example.dreamwallpaper.databinding.FragmentSplashBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,17 +17,16 @@ class SplashFragment: Fragment() {
     private var mBinding: FragmentSplashBinding?= null
     private val binding get() = mBinding!!
 
-    private fun init() {
-        val intent = Intent(requireContext(), MainActivity::class.java)
+    private fun init(view: View) {
         CoroutineScope(Dispatchers.Main).launch {
             delay(1000)
-            startActivity(intent)
+            view.findNavController().navigate(R.id.action_splashFragment_to_mainActivity)
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        init()
+        init(view)
     }
 
     override fun onCreateView(

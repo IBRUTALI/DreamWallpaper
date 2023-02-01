@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fullscreen_graph"
+    app:startDestination="@id/imageFullscreenFragment">
+
+    <fragment
+        android:id="@+id/imageFullscreenFragment"
+        android:name="com.example.dreamwallpaper.screens.image.ImageFullscreenFragment"
+        android:label="fragment_image"
+        tools:layout="@layout/fragment_fullscreen_image" />
+</navigation>

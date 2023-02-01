@@ -37,8 +37,8 @@ class MainAdapter : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
 
     override fun onViewAttachedToWindow(holder: MainViewHolder) {
         super.onViewAttachedToWindow(holder)
-        holder.itemView.setOnClickListener {
-            MainFragment.clickCategory(categoryList[holder.adapterPosition])
+        holder.itemView.setOnClickListener {view ->
+            MainFragment.clickCategory(categoryList[holder.adapterPosition], view)
         }
     }
 

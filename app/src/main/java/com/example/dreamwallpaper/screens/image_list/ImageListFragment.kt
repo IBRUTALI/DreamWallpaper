@@ -1,5 +1,6 @@
 package com.example.dreamwallpaper.screens.image_list
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,13 +9,17 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.dreamwallpaper.MAIN
 import com.example.dreamwallpaper.R
 import com.example.dreamwallpaper.databinding.FragmentImageListBinding
 import com.example.dreamwallpaper.models.Hit
+import com.example.dreamwallpaper.screens.image.ImageFullscreenActivity
 import kotlin.properties.Delegates
 
 class ImageListFragment : Fragment() {
@@ -25,6 +30,7 @@ class ImageListFragment : Fragment() {
     private var currentPage by Delegates.notNull<Int>()
     private val viewModel: ImageListFragmentViewModel by viewModels()
     private var imagesList: List<Hit> ?= null
+    lateinit var navController: NavController
 
     private fun loadImages() {
         binding.imageListRv.adapter = adapter
@@ -57,22 +63,23 @@ class ImageListFragment : Fragment() {
 
     private fun init() {
         binding.btnBack.setOnClickListener {
-            MAIN.navController.popBackStack()
+            navController.popBackStack()
         }
 
         binding.btnForward.setOnClickListener {
             val nextPage = currentPage.plus(1)
-            val id = MAIN.navController.currentDestination?.id
+            val id = navController.currentDestination?.id
             val bundle = Bundle()
             bundle.putInt("page", nextPage)
             bundle.putString("category", currentCategory)
-            MAIN.navController.navigate(id!!, bundle)
+            navController.navigate(id!!, bundle)
         }
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        navController = view.findNavController()
         loadImages()
         init()
     }
@@ -93,8 +100,8 @@ class ImageListFragment : Fragment() {
         val callback: OnBackPressedCallback =
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    val id = MAIN.navController.currentDestination?.id
-                    MAIN.navController.navigate(id!!)
+                    val id = navController.currentDestination?.id
+                    navController.navigate(id!!)
                 }
             }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
@@ -106,10 +113,13 @@ class ImageListFragment : Fragment() {
     }
 
     companion object {
-        fun clickImage(model: Hit) {
+        fun clickImage(model: Hit, view: View) {
+//            val intent = Intent(view.context, ImageFullscreenActivity::class.java)
+//            intent.putExtra("image", model)
+//            startActivity()
             val bundle = Bundle()
             bundle.putSerializable("image", model)
-            MAIN.navController.navigate(R.id.action_imageListFragment_to_imageFragment, bundle)
+            view.findNavController().navigate(R.id.action_imageListFragment_to_imageFullscreenFragment, bundle)
         }
     }
 }

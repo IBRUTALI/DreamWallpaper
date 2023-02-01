@@ -4,9 +4,11 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Superigor/Progi/AndroidProjects/DreamWallpaper/app/src/main/res/drawable/ic_baseline_arrow_forward_24.xml" value="0.38385416666666666" />
+        <entry key="..\:/Superigor/Progi/AndroidProjects/DreamWallpaper/app/src/main/res/layout/activity_image_fullscreen.xml" value="0.20625" />
         <entry key="..\:/Superigor/Progi/AndroidProjects/DreamWallpaper/app/src/main/res/layout/activity_main.xml" value="0.20625" />
         <entry key="..\:/Superigor/Progi/AndroidProjects/DreamWallpaper/app/src/main/res/layout/activity_splash.xml" value="0.20625" />
         <entry key="..\:/Superigor/Progi/AndroidProjects/DreamWallpaper/app/src/main/res/layout/fragment_category.xml" value="0.20625" />
+        <entry key="..\:/Superigor/Progi/AndroidProjects/DreamWallpaper/app/src/main/res/layout/fragment_fullscreen_image.xml" value="0.20625" />
         <entry key="..\:/Superigor/Progi/AndroidProjects/DreamWallpaper/app/src/main/res/layout/fragment_image.xml" value="0.20625" />
         <entry key="..\:/Superigor/Progi/AndroidProjects/DreamWallpaper/app/src/main/res/layout/fragment_image_list.xml" value="0.25" />
         <entry key="..\:/Superigor/Progi/AndroidProjects/DreamWallpaper/app/src/main/res/layout/fragment_main.xml" value="0.36770833333333336" />

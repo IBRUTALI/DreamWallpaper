@@ -44,10 +44,10 @@ class MainFragment : Fragment() {
     }
 
     companion object {
-        fun clickCategory(string: String) {
+        fun clickCategory(string: String, view: View) {
             val bundle = Bundle()
             bundle.putString("category", string)
-            MAIN.navController.navigate(R.id.action_mainFragment_to_imageListFragment, bundle)
+            view.findNavController().navigate(R.id.action_mainFragment_to_imageListFragment, bundle)
         }
     }
 }

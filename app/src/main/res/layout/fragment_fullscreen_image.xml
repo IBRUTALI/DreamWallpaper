@@ -6,7 +6,7 @@
     style="@style/Theme.DreamWallpaper.NoActionBar"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".screens.image.ImageFragment">
+    tools:context=".screens.image.ImageFullscreenFragment">
 
     <ProgressBar
         android:id="@+id/fullscreen_progress"

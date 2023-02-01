@@ -6,30 +6,28 @@ import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.example.dreamwallpaper.R
-import com.example.dreamwallpaper.databinding.FragmentImageBinding
+import com.example.dreamwallpaper.databinding.FragmentFullscreenImageBinding
 import com.example.dreamwallpaper.models.Hit
-import kotlinx.android.synthetic.main.fragment_image.*
+import kotlinx.android.synthetic.main.fragment_fullscreen_image.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.IOException
 
-class ImageFragment : Fragment() {
-    private var mBinding: FragmentImageBinding? = null
+class ImageFullscreenFragment : Fragment() {
+    private var mBinding: FragmentFullscreenImageBinding? = null
     private val binding get() = mBinding!!
     private lateinit var currentImage: Hit
     private var bitmap: Bitmap ?= null
@@ -66,7 +64,7 @@ class ImageFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        mBinding = FragmentImageBinding.inflate(layoutInflater, container, false)
+        mBinding = FragmentFullscreenImageBinding.inflate(layoutInflater, container, false)
         currentImage = arguments?.getSerializable("image") as Hit
 
         if (currentImage.imageWidth > currentImage.imageHeight) {

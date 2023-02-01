@@ -20,11 +20,12 @@
         android:label="Обои"
         tools:layout="@layout/fragment_image_list" >
         <action
-            android:id="@+id/action_imageListFragment_to_imageFragment"
-            app:destination="@id/imageFragment" />
+            android:id="@+id/action_imageListFragment_to_imageFullscreenFragment"
+            app:destination="@id/imageFullscreenFragment" />
     </fragment>
     <fragment
-        android:id="@+id/imageFragment"
-        android:name="com.example.dreamwallpaper.screens.image.ImageFragment"
-        tools:layout="@layout/fragment_image" />
+        android:id="@+id/imageFullscreenFragment"
+        android:name="com.example.dreamwallpaper.screens.image.ImageFullscreenFragment"
+        android:label="fragment_fullscreen_image"
+        tools:layout="@layout/fragment_fullscreen_image" />
 </navigation>

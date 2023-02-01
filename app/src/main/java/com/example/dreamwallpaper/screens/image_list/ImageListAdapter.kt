@@ -80,8 +80,8 @@ class ImageListAdapter: RecyclerView.Adapter<ImageListAdapter.ImageViewHolder>()
 
     override fun onViewAttachedToWindow(holder: ImageViewHolder) {
         super.onViewAttachedToWindow(holder)
-        holder.itemView.setOnClickListener {
-            ImageListFragment.clickImage(imageList[holder.adapterPosition])
+        holder.itemView.setOnClickListener {view ->
+            ImageListFragment.clickImage(imageList[holder.adapterPosition], view)
         }
     }
 
