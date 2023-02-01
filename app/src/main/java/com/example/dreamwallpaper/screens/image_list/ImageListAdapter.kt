@@ -60,7 +60,7 @@ class ImageListAdapter: RecyclerView.Adapter<ImageListAdapter.ImageViewHolder>()
 
             Glide.with(MAIN)
                 .load(imageList[position].webformatURL)
-                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .centerCrop()
                 .placeholder(null)
                 .listener(requestListener)

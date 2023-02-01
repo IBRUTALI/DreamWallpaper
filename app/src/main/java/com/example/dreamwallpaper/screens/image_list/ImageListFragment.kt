@@ -1,18 +1,15 @@
 package com.example.dreamwallpaper.screens.image_list
 
 import android.os.Bundle
-import android.os.Parcelable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.Adapter
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.dreamwallpaper.MAIN
 import com.example.dreamwallpaper.R
@@ -25,19 +22,16 @@ class ImageListFragment : Fragment() {
     private val binding get() = mBinding!!
     private val adapter by lazy { ImageListAdapter() }
     private lateinit var currentCategory: String
-    private val viewModel: ImageListFragmentViewModel by viewModels()
-    private var listImages: ArrayList<Hit>? = null
     private var currentPage by Delegates.notNull<Int>()
-    private var previousImagesList: List<Hit>? = null
+    private val viewModel: ImageListFragmentViewModel by viewModels()
+    private var imagesList: List<Hit> ?= null
 
-    private fun loadImages(savedInstanceState: Bundle?) {
+    private fun loadImages() {
         binding.imageListRv.adapter = adapter
         binding.imageListRv.layoutManager = GridLayoutManager(requireContext(), 2)
 
-            if(viewModel.pageLiveData.value == null)
-                currentPage = 1
-            if(viewModel.imageList.value == null)
-                viewModel.getImagesByCategory(currentCategory, currentPage)
+        if (viewModel.imageList.value == null)
+            viewModel.getImagesByCategory(currentCategory, currentPage)
 
         viewModel.pageLiveData.observe(viewLifecycleOwner, { page ->
             binding.imageListPage.text = page.toString()
@@ -54,31 +48,33 @@ class ImageListFragment : Fragment() {
 
         viewModel.imageList.observe(viewLifecycleOwner, { list ->
             try {
-                listImages = (list.body()!!.hits) as ArrayList<Hit>?
-                adapter.setList(listImages as List<Hit>)
+                imagesList = list.body()!!.hits
+                adapter.setList(imagesList!!)
             } catch (e: NullPointerException) {
             }
         })
     }
 
-    private fun init(savedInstanceState: Bundle?) {
+    private fun init() {
         binding.btnBack.setOnClickListener {
-            val previousPage = currentPage.minus(1)
-            viewModel.getImagesByCategory(currentCategory, previousPage)
-            binding.imageListRv.scrollToPosition(1)
+            MAIN.navController.popBackStack()
         }
 
         binding.btnForward.setOnClickListener {
             val nextPage = currentPage.plus(1)
-            viewModel.getImagesByCategory(currentCategory, nextPage)
-            binding.imageListRv.scrollToPosition(1)
+            val id = MAIN.navController.currentDestination?.id
+            val bundle = Bundle()
+            bundle.putInt("page", nextPage)
+            bundle.putString("category", currentCategory)
+            MAIN.navController.navigate(id!!, bundle)
         }
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loadImages(savedInstanceState)
-        init(savedInstanceState)
+        loadImages()
+        init()
     }
 
     override fun onCreateView(
@@ -87,7 +83,21 @@ class ImageListFragment : Fragment() {
     ): View {
         mBinding = FragmentImageListBinding.inflate(layoutInflater, container, false)
         currentCategory = arguments?.getString("category") as String
+        currentPage = arguments?.getInt("page") as Int
+        if (currentPage == 0) currentPage = 1
+        onBackPressed()
         return binding.root
+    }
+
+    private fun onBackPressed() {
+        val callback: OnBackPressedCallback =
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    val id = MAIN.navController.currentDestination?.id
+                    MAIN.navController.navigate(id!!)
+                }
+            }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
 
     override fun onDestroy() {
