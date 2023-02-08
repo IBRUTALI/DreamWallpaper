@@ -1,4 +1,4 @@
-package com.example.dreamwallpaper.models
+package com.example.dreamwallpaper.domain.models
 
 data class Image(
     val hits: List<Hit>,

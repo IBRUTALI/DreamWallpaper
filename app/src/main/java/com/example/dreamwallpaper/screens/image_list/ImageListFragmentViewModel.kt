@@ -6,37 +6,28 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.dreamwallpaper.Singletons
-import com.example.dreamwallpaper.data.retrofit.RetrofitRepository
-import com.example.dreamwallpaper.data.retrofit.source.BackendException
-import com.example.dreamwallpaper.data.retrofit.source.ConnectionException
-import com.example.dreamwallpaper.data.retrofit.source.ParseBackendResponseException
-import com.example.dreamwallpaper.models.Hit
-import com.example.dreamwallpaper.models.Image
+import com.example.dreamwallpaper.domain.models.Image
+import com.example.dreamwallpaper.util.Result
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import retrofit2.Response
 
 class ImageListFragmentViewModel(application: Application) : AndroidViewModel(application) {
 
-    val imageList: MutableLiveData<Response<Image>> = MutableLiveData()
+    val imageList: MutableLiveData<Result<Image>> = MutableLiveData()
     val pageLiveData: MutableLiveData<Int> = MutableLiveData()
-    val state = MutableLiveData(String())
+    val errorState = MutableLiveData<String>(null)
     private val repository = Singletons.imagesRepository
 
     fun getImagesByCategory(category: String, page: Int) {
-        Log.d("!@#", "Request")
         viewModelScope.launch {
-            try {
-                pageLiveData.value = page
-                imageList.value = repository.getImagesByCategory(category = category, page = page)
-                state.value = null
-            } catch (e: BackendException) {
-                state.value = "Ошибка сервера"
-            } catch (e: ConnectionException) {
-                state.value = "Нет подключения к интернету"
+            when(val result = repository.getImagesByCategory(category = category, page = page)) {
+                is Result.Success -> {
+                    imageList.value = result
+                    pageLiveData.value = page
+                }
+                is Result.Error -> {
+                    errorState.value = "Нет подключения к интернету"
+                }
             }
-
         }
     }
-
 }

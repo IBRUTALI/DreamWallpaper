@@ -1,17 +1,12 @@
 package com.example.dreamwallpaper.screens.main
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
-import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.dreamwallpaper.MAIN
 import com.example.dreamwallpaper.R
 import com.example.dreamwallpaper.databinding.FragmentMainBinding
-import com.example.dreamwallpaper.models.Hit
-import com.example.dreamwallpaper.screens.image_list.ImageListAdapter
 
 class MainFragment : Fragment() {
     private var mBinding: FragmentMainBinding? = null

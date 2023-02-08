@@ -1,4 +1,4 @@
-package com.example.dreamwallpaper.models
+package com.example.dreamwallpaper.domain.models
 
 import java.io.Serializable
 

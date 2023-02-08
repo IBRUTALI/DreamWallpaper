@@ -1,6 +1,5 @@
 package com.example.dreamwallpaper.screens.image_list
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,17 +8,14 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.dreamwallpaper.MAIN
 import com.example.dreamwallpaper.R
 import com.example.dreamwallpaper.databinding.FragmentImageListBinding
-import com.example.dreamwallpaper.models.Hit
-import com.example.dreamwallpaper.screens.image.ImageFullscreenActivity
+import com.example.dreamwallpaper.domain.models.Hit
 import kotlin.properties.Delegates
 
 class ImageListFragment : Fragment() {
@@ -46,17 +42,19 @@ class ImageListFragment : Fragment() {
             else binding.btnBack.visibility = INVISIBLE
         })
 
-        viewModel.state.observe(viewLifecycleOwner, { error ->
+        viewModel.errorState.observe(viewLifecycleOwner, { error ->
             if (!error.isNullOrEmpty()) {
-                Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show()
+                val toast = Toast.makeText(requireContext(), error, Toast.LENGTH_LONG)
+                toast.show()
             }
         })
 
         viewModel.imageList.observe(viewLifecycleOwner, { list ->
             try {
-                imagesList = list.body()!!.hits
+                imagesList = list.data?.hits
                 adapter.setList(imagesList!!)
             } catch (e: NullPointerException) {
+                Toast.makeText(requireContext(), "Список пуст", Toast.LENGTH_SHORT).show()
             }
         })
     }

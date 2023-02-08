@@ -1,4 +1,7 @@
-package com.example.dreamwallpaper.data.retrofit.source
+package com.example.dreamwallpaper.domain.error_handling
+
+import com.example.dreamwallpaper.util.Result
+import retrofit2.Response
 
 open class AppException : RuntimeException {
     constructor() : super()
@@ -9,6 +12,7 @@ open class AppException : RuntimeException {
 class ConnectionException(cause: Throwable) : AppException(cause = cause)
 
 open class BackendException(
+    val code: Int,
     message: String
 ) : AppException(message)
 

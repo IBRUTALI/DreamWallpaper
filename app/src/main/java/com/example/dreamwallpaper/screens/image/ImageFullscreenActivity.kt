@@ -2,11 +2,7 @@ package com.example.dreamwallpaper.screens.image
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.commit
 import com.example.dreamwallpaper.R
-import com.example.dreamwallpaper.models.Hit
 
 class ImageFullscreenActivity : AppCompatActivity() {
 

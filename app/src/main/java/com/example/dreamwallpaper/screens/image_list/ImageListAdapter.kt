@@ -2,24 +2,20 @@ package com.example.dreamwallpaper.screens.image_list
 
 import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.example.dreamwallpaper.MAIN
 import com.example.dreamwallpaper.R
-import com.example.dreamwallpaper.models.Hit
+import com.example.dreamwallpaper.domain.models.Hit
 import kotlinx.android.synthetic.main.item_image.view.*
-import java.lang.NullPointerException
 
 class ImageListAdapter: RecyclerView.Adapter<ImageListAdapter.ImageViewHolder>() {
 

@@ -1,6 +1,6 @@
 package com.example.dreamwallpaper
 
-import com.example.dreamwallpaper.data.images.ImagesRepository
+import com.example.dreamwallpaper.domain.images.ImagesRepository
 import com.example.dreamwallpaper.data.retrofit.api.RetrofitInstance
 import com.example.dreamwallpaper.data.retrofit.source.ImagesSources
 import com.example.dreamwallpaper.data.retrofit.source.SourcesProvider

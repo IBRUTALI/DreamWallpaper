@@ -5,6 +5,8 @@ import com.example.dreamwallpaper.data.retrofit.RetrofitConfig
 import com.example.dreamwallpaper.data.retrofit.source.RetrofitSourceProvider
 import com.example.dreamwallpaper.data.retrofit.source.SourcesProvider
 import com.squareup.moshi.Moshi
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
@@ -19,9 +21,18 @@ object RetrofitInstance {
         RetrofitSourceProvider(config)
     }
 
+    private val interceptor = HttpLoggingInterceptor().apply {
+        this.level = HttpLoggingInterceptor.Level.BODY
+    }
+
+    private val client = OkHttpClient.Builder().apply {
+        this.addInterceptor(interceptor)
+    }.build()
+
     private fun createRetrofit(moshi: Moshi): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
+            .client(client)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
     }
