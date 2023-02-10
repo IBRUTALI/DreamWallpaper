@@ -2,13 +2,13 @@
 <resources>
 
     <string-array name="category">
-        <item>nature</item>
-        <item>fashion</item>
-        <item>backgrounds</item>
-        <item>science</item>
-        <item>places</item>
-        <item>animals</item>
-        <item>sports</item>
+        <item>@string/nature</item>
+        <item>@string/fashion</item>
+        <item>@string/backgrounds</item>
+        <item>@string/science</item>
+        <item>@string/places</item>
+        <item>@string/animals</item>
+        <item>@string/sports</item>
     </string-array>
 
 </resources>

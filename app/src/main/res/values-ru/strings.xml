@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="set_image_as_wallpaper">Установить изображение как обои?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="nature">Природа</string>
+    <string name="fashion">Мода</string>
+    <string name="backgrounds">Фон</string>
+    <string name="science">Наука</string>
+    <string name="places">Места</string>
+    <string name="animals">Животные</string>
+    <string name="sports">Спорт</string>
+    <string name="category">Категории</string>
+    <string name="wallpapers">Обои</string>
+</resources>

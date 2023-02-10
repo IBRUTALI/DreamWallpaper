@@ -1,7 +1,16 @@
 <resources>
-    <string name="app_name">Dream Wallpaper</string>
-    <string name="set_image_as_wallpaper">Установить изображение как обои?</string>
-    <string name="yes">Да</string>
-    <string name="no">Нет</string>
-    <string name="app_name_lines_2">Dream \nWallpaper</string>
+    <string name="app_name" translatable="false">Dream Wallpaper</string>
+    <string name="app_name_lines_2" translatable="false">Dream \nWallpaper</string>
+        <string name="set_image_as_wallpaper">Set image as wallpaper?</string>
+        <string name="yes">Yes</string>
+        <string name="no">No</string>
+        <string name="nature">Nature</string>
+        <string name="fashion">Fashion</string>
+        <string name="backgrounds">Backgrounds</string>
+        <string name="science">Science</string>
+        <string name="places">Places</string>
+        <string name="animals">Animals</string>
+        <string name="sports">Sports</string>
+        <string name="category">Category</string>
+        <string name="wallpapers">Wallpapers</string>
 </resources>

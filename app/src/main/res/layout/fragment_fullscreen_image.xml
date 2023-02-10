@@ -39,6 +39,7 @@
         android:layout_marginBottom="10dp"
         android:elevation="0dp"
         app:backgroundTint="#00000000"
+        app:tint="?attr/colorSecondary"
         app:pressedTranslationZ="0dp"
         android:outlineProvider="none"
         android:clickable="true"

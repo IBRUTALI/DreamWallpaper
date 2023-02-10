@@ -1,6 +1,7 @@
 package com.example.dreamwallpaper.screens.main
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,8 @@ import kotlinx.android.synthetic.main.item_category.view.*
 
 class MainAdapter : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
     private lateinit var categoryList: Array<String>
+    private lateinit var categoryIconList: Array<Int>
+    private lateinit var categoryRetrofitList: Array<String>
 
     class MainViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
@@ -21,7 +24,8 @@ class MainAdapter : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         holder.itemView.apply {
-            category_title.text = categoryList[position].uppercase()
+            category_title_item.text = categoryList[position]
+            image_view_category_item.setImageResource(categoryIconList[position])
         }
     }
 
@@ -30,15 +34,18 @@ class MainAdapter : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setList(list: Array<String>) {
+    fun setList(list: Array<String>, iconList: Array<Int>, localeCategoryList: Array<String>) {
         categoryList = list
+        categoryIconList = iconList
+        categoryRetrofitList = localeCategoryList
         notifyDataSetChanged()
     }
 
     override fun onViewAttachedToWindow(holder: MainViewHolder) {
         super.onViewAttachedToWindow(holder)
         holder.itemView.setOnClickListener {view ->
-            MainFragment.clickCategory(categoryList[holder.adapterPosition], view)
+            Log.d("!@#",categoryRetrofitList[holder.adapterPosition].lowercase())
+            MainFragment.clickCategory(categoryRetrofitList[holder.adapterPosition].lowercase(), view)
         }
     }
 

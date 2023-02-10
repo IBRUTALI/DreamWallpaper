@@ -112,9 +112,6 @@ class ImageListFragment : Fragment() {
 
     companion object {
         fun clickImage(model: Hit, view: View) {
-//            val intent = Intent(view.context, ImageFullscreenActivity::class.java)
-//            intent.putExtra("image", model)
-//            startActivity()
             val bundle = Bundle()
             bundle.putSerializable("image", model)
             view.findNavController().navigate(R.id.action_imageListFragment_to_imageFullscreenFragment, bundle)

@@ -1,5 +1,6 @@
 package com.example.dreamwallpaper.screens.splash
 
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +20,9 @@ class SplashFragment: Fragment() {
 
     private fun init(view: View) {
         CoroutineScope(Dispatchers.Main).launch {
+            binding.splashHorizontalProgress.max = 20
+            val value = 19
+            ObjectAnimator.ofInt(binding.splashHorizontalProgress, "progress", value).setDuration(1000).start()
             delay(1000)
             view.findNavController().navigate(R.id.action_splashFragment_to_mainActivity)
         }

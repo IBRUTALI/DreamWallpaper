@@ -1,8 +1,5 @@
 package com.example.dreamwallpaper.domain.error_handling
 
-import com.example.dreamwallpaper.util.Result
-import retrofit2.Response
-
 open class AppException : RuntimeException {
     constructor() : super()
     constructor(message: String) : super(message)

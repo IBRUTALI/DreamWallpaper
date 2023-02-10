@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.example.dreamwallpaper.screens.main.MainFragment"
-        android:label="Категории"
+        android:label="@string/category"
         tools:layout="@layout/fragment_main" >
         <action
             android:id="@+id/action_mainFragment_to_imageListFragment"
@@ -17,7 +17,7 @@
     <fragment
         android:id="@+id/imageListFragment"
         android:name="com.example.dreamwallpaper.screens.image_list.ImageListFragment"
-        android:label="Обои"
+        android:label="@string/wallpapers"
         tools:layout="@layout/fragment_image_list" >
         <action
             android:id="@+id/action_imageListFragment_to_imageFullscreenFragment"

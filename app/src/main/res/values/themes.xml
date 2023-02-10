@@ -2,9 +2,9 @@
     <!-- Base application theme. -->
     <style name="Theme.DreamWallpaper.NoActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/blackLite_200</item>
-        <item name="colorPrimaryVariant">#D6D6D6</item>
-        <item name="colorOnPrimary">#D6D6D6</item>
+        <item name="colorPrimary">@color/white_lite</item>
+        <item name="colorPrimaryVariant">@color/blackLite_200</item>
+        <item name="colorOnPrimary">@color/white_lite</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/orange_lite</item>
         <item name="colorSecondaryVariant">@color/teal_700</item>
@@ -18,11 +18,15 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="AlertDialogCustom" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+
+    </style>
+
     <style name="Theme.DreamWallpaper.ActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">#EAEAEA</item>
-        <item name="colorPrimaryVariant">#D6D6D6</item>
-        <item name="colorOnPrimary">#D6D6D6</item>
+        <item name="colorPrimary">@color/white_lite</item>
+        <item name="colorPrimaryVariant">@color/blackLite_200</item>
+        <item name="colorOnPrimary">@color/white_lite</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/orange_lite</item>
         <item name="colorSecondaryVariant">@color/teal_700</item>
@@ -33,6 +37,8 @@
         <item name="android:windowContentOverlay">@null</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+        <item name="colorAccent">@color/black</item>
     </style>
+
+
 </resources>
