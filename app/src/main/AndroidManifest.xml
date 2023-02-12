@@ -22,9 +22,6 @@
             <activity
             android:name=".screens.main.MainActivity"
             android:theme="@style/Theme.DreamWallpaper.ActionBar" />
-        <activity
-            android:name=".screens.image.ImageFullscreenActivity"
-            android:theme="@style/Theme.DreamWallpaper.NoActionBar" />
     </application>
 
 </manifest>

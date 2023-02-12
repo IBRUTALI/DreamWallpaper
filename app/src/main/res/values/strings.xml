@@ -13,4 +13,6 @@
         <string name="sports">Sports</string>
         <string name="category">Category</string>
         <string name="wallpapers">Wallpapers</string>
+        <string name="no_internet_connection">No internet connection</string>
+        <string name="server_error">Server error</string>
 </resources>

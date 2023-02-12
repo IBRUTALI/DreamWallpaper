@@ -5,13 +5,11 @@ import android.app.WallpaperManager
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
@@ -74,7 +72,7 @@ class ImageFullscreenFragment : Fragment() {
 
 
     private fun dialogSetWallpaper() {
-        val builder = AlertDialog.Builder(requireContext(),  R.style.AlertDialogCustom)
+        val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
         builder.setTitle(getString(R.string.set_image_as_wallpaper))
             .setPositiveButton(getString(R.string.yes)) { dialog, id ->
                 lifecycleScope.launch(Dispatchers.IO) {

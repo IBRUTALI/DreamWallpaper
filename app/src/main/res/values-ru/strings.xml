@@ -12,4 +12,6 @@
     <string name="sports">Спорт</string>
     <string name="category">Категории</string>
     <string name="wallpapers">Обои</string>
+    <string name="no_internet_connection">Нет подключения к интернету</string>
+    <string name="server_error">Ошибка сервера</string>
 </resources>
