@@ -8,12 +8,11 @@ import com.example.dreamwallpaper.util.Result
 import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
+import javax.inject.Inject
 
-open class BaseRetrofitSource(
+open class BaseRetrofitSource @Inject constructor(
     retrofitConfig: RetrofitConfig
 ) {
-
-    val retrofit = retrofitConfig.retrofit
 
     private val errorAdapter = retrofitConfig.moshi.adapter(ErrorResponseBody::class.java)
 

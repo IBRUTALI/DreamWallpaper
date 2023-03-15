@@ -8,16 +8,20 @@ import androidx.lifecycle.viewModelScope
 import com.example.dreamwallpaper.R
 import com.example.dreamwallpaper.Singletons
 import com.example.dreamwallpaper.domain.ResourcesProvider
+import com.example.dreamwallpaper.domain.images.ImagesRepository
 import com.example.dreamwallpaper.domain.models.Image
 import com.example.dreamwallpaper.util.Result
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ImageListFragmentViewModel(application: Application) : AndroidViewModel(application) {
+class ImageListFragmentViewModel @Inject constructor(
+    var repository: ImagesRepository,
+    application: Application
+) : AndroidViewModel(application) {
 
     val imageList: MutableLiveData<Result<Image>> = MutableLiveData()
     val pageLiveData: MutableLiveData<Int> = MutableLiveData()
     val errorState = MutableLiveData<String>(null)
-    private val repository = Singletons.imagesRepository
     private val resourcesProvider = ResourcesProvider(application)
 
     fun getImagesByCategory(category: String, page: Int) {
