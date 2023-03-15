@@ -11,8 +11,11 @@ import dagger.Component
 import javax.inject.Singleton
 
 @Component(
-    modules = [AppModule::class, FirebaseModule::class,
-        ProviderModule::class, RemoteModule::class, RepositoryModule::class, ViewModelModule::class]
+    modules = [
+        AppModule::class, FirebaseModule::class, ProviderModule::class,
+        RemoteModule::class, RepositoryModule::class, ViewModelModule::class,
+        ViewModelFactoryModule::class
+    ]
 )
 
 @Singleton
