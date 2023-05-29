@@ -1,9 +1,11 @@
 package com.example.dreamwallpaper.screens.main
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.AppBarConfiguration
@@ -25,13 +27,17 @@ class MainActivity : AppCompatActivity() {
         MAIN = this
         navController = Navigation.findNavController(this, R.id.nav_host)
         val appBarConfiguration = AppBarConfiguration(navController.graph)
-        binding.toolbar.toolbar.setupWithNavController(navController, appBarConfiguration)
+        binding.toolbar.setupWithNavController(navController, appBarConfiguration)
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.imageFullscreenFragment) {
-                binding.toolbar.toolbar.visibility = GONE
+                binding.toolbar.visibility = GONE
             } else {
-                binding.toolbar.toolbar.visibility = VISIBLE
+                binding.toolbar.visibility = VISIBLE
             }
+            val isTopLevelDestination = appBarConfiguration.topLevelDestinations.contains(destination.id)
+            if(!isTopLevelDestination)
+            binding.toolbar.setNavigationIcon(R.drawable.ic_back)
+            binding.toolbar.setNavigationIconTint(resources.getColor(R.color.orange_lite))
         }
     }
 
