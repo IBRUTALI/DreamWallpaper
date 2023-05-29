@@ -13,23 +13,22 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.dreamwallpaper.MAIN
-import com.example.dreamwallpaper.R
+import com.example.dreamwallpaper.databinding.ItemImageBinding
 import com.example.dreamwallpaper.domain.models.Hit
-import kotlinx.android.synthetic.main.item_image.view.*
 
 class ImageListAdapter: RecyclerView.Adapter<ImageListAdapter.ImageViewHolder>() {
 
     private var imageList = emptyList<Hit>()
 
-    class ImageViewHolder(view: View) : RecyclerView.ViewHolder(view)
+    class ImageViewHolder(val binding: ItemImageBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_image, parent, false)
-        return ImageViewHolder(view)
+        val binding = ItemImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ImageViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        holder.itemView.apply {
+        with(holder.binding) {
             val requestListener = object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,
@@ -37,7 +36,7 @@ class ImageListAdapter: RecyclerView.Adapter<ImageListAdapter.ImageViewHolder>()
                     target: Target<Drawable>?,
                     isFirstResource: Boolean
                 ): Boolean {
-                    item_progress.visibility = View.VISIBLE
+                    itemProgress.visibility = View.VISIBLE
                     return false
                 }
 
@@ -48,7 +47,7 @@ class ImageListAdapter: RecyclerView.Adapter<ImageListAdapter.ImageViewHolder>()
                     dataSource: DataSource?,
                     isFirstResource: Boolean
                 ): Boolean {
-                    item_progress.visibility = View.GONE
+                    itemProgress.visibility = View.GONE
                     return false
                 }
 
@@ -60,7 +59,7 @@ class ImageListAdapter: RecyclerView.Adapter<ImageListAdapter.ImageViewHolder>()
                 .centerCrop()
                 .placeholder(null)
                 .listener(requestListener)
-                .into(item_image)
+                .into(itemImage)
         }
     }
 

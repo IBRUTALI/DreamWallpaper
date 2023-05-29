@@ -35,28 +35,28 @@ class ImageListFragment : Fragment() {
         if (viewModel.imageList.value == null)
             viewModel.getImagesByCategory(currentCategory, currentPage)
 
-        viewModel.pageLiveData.observe(viewLifecycleOwner, { page ->
+        viewModel.pageLiveData.observe(viewLifecycleOwner) { page ->
             binding.imageListPage.text = page.toString()
             currentPage = page
             if (page > 1) binding.btnBack.visibility = VISIBLE
             else binding.btnBack.visibility = INVISIBLE
-        })
+        }
 
-        viewModel.errorState.observe(viewLifecycleOwner, { error ->
+        viewModel.errorState.observe(viewLifecycleOwner) { error ->
             if (!error.isNullOrEmpty()) {
                 val toast = Toast.makeText(requireContext(), error, Toast.LENGTH_LONG)
                 toast.show()
             }
-        })
+        }
 
-        viewModel.imageList.observe(viewLifecycleOwner, { list ->
+        viewModel.imageList.observe(viewLifecycleOwner) { list ->
             try {
                 imagesList = list.data?.hits
                 adapter.setList(imagesList!!)
             } catch (e: NullPointerException) {
                 Toast.makeText(requireContext(), "Список пуст", Toast.LENGTH_SHORT).show()
             }
-        })
+        }
     }
 
     private fun init() {
