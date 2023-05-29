@@ -7,25 +7,25 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dreamwallpaper.R
-import kotlinx.android.synthetic.main.item_category.view.*
+import com.example.dreamwallpaper.databinding.ItemCategoryBinding
 
 class MainAdapter : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
     private lateinit var categoryList: Array<String>
     private lateinit var categoryIconList: Array<Int>
     private lateinit var categoryRetrofitList: Array<String>
 
-    class MainViewHolder(view: View) : RecyclerView.ViewHolder(view)
+    class MainViewHolder(val binding: ItemCategoryBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_category, parent, false)
-        return MainViewHolder(view)
+        val binding =
+            ItemCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return MainViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
-        holder.itemView.apply {
-            category_title_item.text = categoryList[position]
-            image_view_category_item.setImageResource(categoryIconList[position])
+        with(holder.binding) {
+            categoryTitleItem.text = categoryList[position]
+            imageViewCategoryItem.setImageResource(categoryIconList[position])
         }
     }
 

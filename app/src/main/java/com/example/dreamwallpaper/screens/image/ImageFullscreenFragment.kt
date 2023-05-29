@@ -18,7 +18,6 @@ import com.bumptech.glide.request.transition.Transition
 import com.example.dreamwallpaper.R
 import com.example.dreamwallpaper.databinding.FragmentFullscreenImageBinding
 import com.example.dreamwallpaper.domain.models.Hit
-import kotlinx.android.synthetic.main.fragment_fullscreen_image.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -38,7 +37,7 @@ class ImageFullscreenFragment : Fragment() {
                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                     binding.fullscreenImage.setImageBitmap(resource)
                     bitmap = resource
-                    fullscreen_progress.visibility = View.GONE
+                    binding.fullscreenProgress.visibility = View.GONE
                 }
 
                 override fun onLoadCleared(placeholder: Drawable?) {}
@@ -74,7 +73,7 @@ class ImageFullscreenFragment : Fragment() {
     private fun dialogSetWallpaper() {
         val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
         builder.setTitle(getString(R.string.set_image_as_wallpaper))
-            .setPositiveButton(getString(R.string.yes)) { dialog, id ->
+            .setPositiveButton(getString(R.string.yes)) { _, _ ->
                 lifecycleScope.launch(Dispatchers.IO) {
                     val wallpaperManager = WallpaperManager.getInstance(requireContext())
                     try {

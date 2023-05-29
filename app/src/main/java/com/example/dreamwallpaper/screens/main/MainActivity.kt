@@ -1,9 +1,11 @@
 package com.example.dreamwallpaper.screens.main
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.AppBarConfiguration
@@ -32,6 +34,10 @@ class MainActivity : AppCompatActivity() {
             } else {
                 binding.toolbar.visibility = VISIBLE
             }
+            val isTopLevelDestination = appBarConfiguration.topLevelDestinations.contains(destination.id)
+            if(!isTopLevelDestination)
+            binding.toolbar.setNavigationIcon(R.drawable.ic_back)
+            binding.toolbar.setNavigationIconTint(resources.getColor(R.color.orange_lite))
         }
     }
 
