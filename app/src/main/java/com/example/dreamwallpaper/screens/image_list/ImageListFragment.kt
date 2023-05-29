@@ -10,12 +10,16 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.dreamwallpaper.App
 import com.example.dreamwallpaper.R
 import com.example.dreamwallpaper.databinding.FragmentImageListBinding
 import com.example.dreamwallpaper.domain.models.Hit
+import com.example.dreamwallpaper.screens.di.AppComponent
+import javax.inject.Inject
 import kotlin.properties.Delegates
 
 class ImageListFragment : Fragment() {
@@ -24,7 +28,8 @@ class ImageListFragment : Fragment() {
     private val adapter by lazy { ImageListAdapter() }
     private lateinit var currentCategory: String
     private var currentPage by Delegates.notNull<Int>()
-    private val viewModel: ImageListFragmentViewModel by viewModels()
+    @Inject lateinit var vmFactory: ViewModelProvider.Factory
+    private lateinit var viewModel: ImageListFragmentViewModel
     private var imagesList: List<Hit> ?= null
     lateinit var navController: NavController
 
@@ -54,7 +59,7 @@ class ImageListFragment : Fragment() {
                 imagesList = list.data?.hits
                 adapter.setList(imagesList!!)
             } catch (e: NullPointerException) {
-                Toast.makeText(requireContext(), "Список пуст", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.empty_list), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -86,6 +91,8 @@ class ImageListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        App.appComponent.inject(fragment = this@ImageListFragment)
+        viewModel = ViewModelProvider(viewModelStore, vmFactory)[ImageListFragmentViewModel::class.java]
         mBinding = FragmentImageListBinding.inflate(layoutInflater, container, false)
         currentCategory = arguments?.getString("category") as String
         currentPage = arguments?.getInt("page") as Int
