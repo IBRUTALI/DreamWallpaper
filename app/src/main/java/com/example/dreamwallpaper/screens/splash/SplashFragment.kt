@@ -25,6 +25,7 @@ class SplashFragment: Fragment() {
             ObjectAnimator.ofInt(binding.splashHorizontalProgress, "progress", value).setDuration(1000).start()
             delay(1000)
             view.findNavController().navigate(R.id.action_splashFragment_to_mainActivity)
+            activity?.finish()
         }
     }
 

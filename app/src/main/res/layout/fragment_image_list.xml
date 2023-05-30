@@ -34,14 +34,15 @@
         android:clickable="true"
         android:visibility="invisible"
         android:elevation="0dp"
-        app:tint="?attr/colorPrimaryVariant"
+        app:tint="@color/orange_lite"
         app:backgroundTint="#00000000"
         app:pressedTranslationZ="0dp"
         android:outlineProvider="none"
-        android:src="?attr/actionModeCloseDrawable"
+        android:src="@drawable/ic_back"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image_list_rv" />
+        app:layout_constraintTop_toBottomOf="@+id/image_list_rv"
+        android:focusable="true" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_forward"
@@ -49,22 +50,25 @@
         android:layout_height="50dp"
         android:clickable="true"
         android:elevation="0dp"
-        app:tint="?attr/colorPrimaryVariant"
+        app:tint="@color/orange_lite"
         app:backgroundTint="#00000000"
         app:pressedTranslationZ="0dp"
         android:outlineProvider="none"
-        android:src="@drawable/ic_baseline_arrow_forward_24"
+        android:src="@drawable/ic_forward"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image_list_rv" />
+        app:layout_constraintTop_toBottomOf="@+id/image_list_rv"
+        android:focusable="true" />
 
     <TextView
         android:id="@+id/image_list_page"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="1"
+        android:fontFamily="@font/tt_norms_regular"
         android:textColor="?android:textColorPrimary"
-        android:textSize="20sp"
+        android:textSize="26sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btn_forward"
         app:layout_constraintStart_toEndOf="@+id/btn_back"

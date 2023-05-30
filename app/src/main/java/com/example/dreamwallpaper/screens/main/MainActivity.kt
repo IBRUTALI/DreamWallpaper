@@ -1,15 +1,12 @@
 package com.example.dreamwallpaper.screens.main
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.dreamwallpaper.MAIN
 import com.example.dreamwallpaper.R
@@ -31,18 +28,22 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.imageFullscreenFragment) {
                 binding.toolbar.visibility = GONE
+                binding.collapsingToolbarLayout.visibility = GONE
             } else {
                 binding.toolbar.visibility = VISIBLE
+                binding.collapsingToolbarLayout.visibility = VISIBLE
             }
             val isTopLevelDestination = appBarConfiguration.topLevelDestinations.contains(destination.id)
-            if(!isTopLevelDestination)
-            binding.toolbar.setNavigationIcon(R.drawable.ic_back)
-            binding.toolbar.setNavigationIconTint(resources.getColor(R.color.orange_lite))
+            if(!isTopLevelDestination){
+                binding.toolbar.setNavigationIcon(R.drawable.ic_back)
+                binding.toolbar.setNavigationIconTint(resources.getColor(R.color.orange_lite))
+            }
         }
     }
 
     override fun onBackPressed() {
         if (navController.currentDestination?.id == R.id.mainFragment) {
+            finish()
         } else {
             navController.popBackStack()
         }
