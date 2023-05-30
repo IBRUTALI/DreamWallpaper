@@ -8,6 +8,7 @@
     tools:context=".screens.main.MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -15,15 +16,17 @@
             android:id="@+id/collapsing_toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            app:layout_scrollFlags="scroll">
+            android:fitsSystemWindows="true"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:titleTextAppearance="@style/ActionBarTitle"
                 app:contentInsetStartWithNavigation="0dp"
-                android:theme="@style/ActionBarTheme"/>
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/ActionBarTheme"
+                app:titleTextAppearance="@style/Toolbar.TitleText" />
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
