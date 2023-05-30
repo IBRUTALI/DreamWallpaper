@@ -13,7 +13,6 @@ import com.example.dreamwallpaper.R
 import com.example.dreamwallpaper.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-
     private var mBinding: ActivityMainBinding? = null
     private val binding get() = mBinding!!
     lateinit var navController: NavController
