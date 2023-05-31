@@ -7,16 +7,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.dreamwallpaper.R
 import com.example.dreamwallpaper.Singletons
-import com.example.dreamwallpaper.data.retrofit.RetrofitRepositoryImpl
-import com.example.dreamwallpaper.data.retrofit.source.ImagesRetrofitRepository
 import com.example.dreamwallpaper.domain.ResourcesProvider
+import com.example.dreamwallpaper.domain.images.ImagesRepository
 import com.example.dreamwallpaper.domain.models.Image
 import com.example.dreamwallpaper.util.Result
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ImageListFragmentViewModel @Inject constructor(
-    var repository: RetrofitRepositoryImpl,
+    var repository: ImagesRepository,
     application: Application
 ) : AndroidViewModel(application) {
 

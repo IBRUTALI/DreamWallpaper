@@ -10,12 +10,11 @@ import dagger.multibindings.IntoMap
 
 @Module
 abstract class ViewModelModule {
-
     @Binds
     @IntoMap
     @ViewModelKey(ImageListFragmentViewModel::class)
-    internal abstract fun bindImageListFragmentViewModel(
-        imageListFragmentViewModel: ImageListFragmentViewModel
-    ): ViewModel
+    internal abstract fun bindImageListFragmentViewModel(imageListFragmentViewModel: ImageListFragmentViewModel): ViewModel
 
+    @Binds
+    internal abstract fun bindImageListViewModelFactory(factory: ImageListViewModelFactory): ViewModelProvider.Factory
 }

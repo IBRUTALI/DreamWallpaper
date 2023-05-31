@@ -28,7 +28,8 @@ class ImageListFragment : Fragment() {
     private val adapter by lazy { ImageListAdapter() }
     private lateinit var currentCategory: String
     private var currentPage by Delegates.notNull<Int>()
-    @Inject lateinit var vmFactory: ViewModelProvider.Factory
+    @Inject
+    lateinit var vmFactory: ViewModelProvider.Factory
     private lateinit var viewModel: ImageListFragmentViewModel
     private var imagesList: List<Hit> ?= null
     lateinit var navController: NavController

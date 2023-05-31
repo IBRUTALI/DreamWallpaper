@@ -2,6 +2,8 @@ package com.example.dreamwallpaper.data.retrofit.api
 
 import com.example.dreamwallpaper.BASE_URL
 import com.example.dreamwallpaper.data.retrofit.RetrofitConfig
+import com.example.dreamwallpaper.data.retrofit.source.RetrofitSourceProvider
+import com.example.dreamwallpaper.data.retrofit.source.SourcesProvider
 import com.squareup.moshi.Moshi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
