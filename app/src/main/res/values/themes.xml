@@ -35,7 +35,7 @@
         <item name="android:statusBarColor">@color/white_lite</item>
         <item name="android:windowLightStatusBar">true</item>
         <!-- Alert dialog. -->
-        <item name="alertDialogTheme">@style/AlertDialogCustom</item>
+        <item name="alertDialogTheme">@style/CustomAlertDialog</item>
     </style>
 
 </resources>

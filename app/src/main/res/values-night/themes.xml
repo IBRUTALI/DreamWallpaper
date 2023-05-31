@@ -18,7 +18,7 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="AlertDialogCustom" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+    <style name="CustomAlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
         <!-- buttons -->
         <item name="colorAccent">@color/white</item>
         <!-- title and text -->

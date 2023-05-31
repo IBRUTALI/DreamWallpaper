@@ -15,5 +15,4 @@
         <string name="wallpapers">Wallpapers</string>
         <string name="no_internet_connection">No internet connection</string>
         <string name="server_error">Server error</string>
-    <string name="empty_list">List is empty</string>
 </resources>
