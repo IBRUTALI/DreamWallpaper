@@ -71,7 +71,7 @@ class ImageFullscreenFragment : Fragment() {
 
 
     private fun dialogSetWallpaper() {
-        val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
+        val builder = AlertDialog.Builder(requireContext(), R.style.CustomAlertDialog)
         builder.setTitle(getString(R.string.set_image_as_wallpaper))
             .setPositiveButton(getString(R.string.yes)) { _, _ ->
                 lifecycleScope.launch(Dispatchers.IO) {
