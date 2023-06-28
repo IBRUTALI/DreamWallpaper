@@ -10,7 +10,6 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
-import com.example.dreamwallpaper.MAIN
 import com.example.dreamwallpaper.R
 import com.example.dreamwallpaper.databinding.ActivityMainBinding
 import com.google.android.material.appbar.MaterialToolbar
@@ -25,7 +24,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        MAIN = this
         navController = Navigation.findNavController(this, R.id.nav_host)
         val appBarConfiguration = AppBarConfiguration(navController.graph)
         with(binding.toolbar) {

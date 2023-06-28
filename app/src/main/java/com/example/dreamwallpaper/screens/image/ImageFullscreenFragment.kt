@@ -17,7 +17,7 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.example.dreamwallpaper.R
 import com.example.dreamwallpaper.databinding.FragmentFullscreenImageBinding
-import com.example.dreamwallpaper.domain.models.Hit
+import com.example.dreamwallpaper.data.retrofit.models.Hit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.IOException

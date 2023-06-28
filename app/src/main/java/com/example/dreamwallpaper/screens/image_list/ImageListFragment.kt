@@ -15,8 +15,9 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.dreamwallpaper.R
 import com.example.dreamwallpaper.databinding.FragmentImageListBinding
-import com.example.dreamwallpaper.domain.models.Hit
+import com.example.dreamwallpaper.data.retrofit.models.Hit
 import kotlin.properties.Delegates
+import com.example.dreamwallpaper.util.Result
 
 class ImageListFragment : Fragment() {
     private var mBinding: FragmentImageListBinding? = null
@@ -25,7 +26,7 @@ class ImageListFragment : Fragment() {
     private lateinit var currentCategory: String
     private var currentPage by Delegates.notNull<Int>()
     private val viewModel: ImageListFragmentViewModel by viewModels()
-    private var imagesList: List<Hit> ?= null
+    private var imagesList: List<Hit>? = null
     lateinit var navController: NavController
 
     private fun loadImages() {
@@ -35,28 +36,28 @@ class ImageListFragment : Fragment() {
         if (viewModel.imageList.value == null)
             viewModel.getImagesByCategory(currentCategory, currentPage)
 
-        viewModel.pageLiveData.observe(viewLifecycleOwner, { page ->
+        viewModel.pageLiveData.observe(viewLifecycleOwner) { page ->
             binding.imageListPage.text = page.toString()
             currentPage = page
             if (page > 1) binding.btnBack.visibility = VISIBLE
             else binding.btnBack.visibility = INVISIBLE
-        })
+        }
 
-        viewModel.errorState.observe(viewLifecycleOwner, { error ->
-            if (!error.isNullOrEmpty()) {
-                val toast = Toast.makeText(requireContext(), error, Toast.LENGTH_LONG)
-                toast.show()
-            }
-        })
+        viewModel.imageList.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Result.Loading -> {
 
-        viewModel.imageList.observe(viewLifecycleOwner, { list ->
-            try {
-                imagesList = list.data?.hits
-                adapter.setList(imagesList!!)
-            } catch (e: NullPointerException) {
-                Toast.makeText(requireContext(), "Список пуст", Toast.LENGTH_SHORT).show()
+                }
+                is Result.Success -> {
+                    imagesList = result.data?.hits
+                    adapter.setList(imagesList ?: emptyList())
+                }
+                is Result.Error -> {
+                    Toast.makeText(requireContext(), result.message, Toast.LENGTH_SHORT).show()
+                }
             }
-        })
+
+        }
     }
 
     private fun init() {
@@ -98,8 +99,9 @@ class ImageListFragment : Fragment() {
         val callback: OnBackPressedCallback =
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    val id = navController.currentDestination?.id
-                    navController.navigate(id!!)
+                    navController.currentDestination?.let {
+                        navController.navigate(id)
+                    }
                 }
             }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
@@ -114,7 +116,8 @@ class ImageListFragment : Fragment() {
         fun clickImage(model: Hit, view: View) {
             val bundle = Bundle()
             bundle.putSerializable("image", model)
-            view.findNavController().navigate(R.id.action_imageListFragment_to_imageFullscreenFragment, bundle)
+            view.findNavController()
+                .navigate(R.id.action_imageListFragment_to_imageFullscreenFragment, bundle)
         }
     }
 }
