@@ -12,9 +12,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.example.dreamwallpaper.MAIN
 import com.example.dreamwallpaper.databinding.ItemImageBinding
-import com.example.dreamwallpaper.domain.models.Hit
+import com.example.dreamwallpaper.data.retrofit.models.Hit
 
 class ImageListAdapter: RecyclerView.Adapter<ImageListAdapter.ImageViewHolder>() {
 
@@ -53,7 +52,7 @@ class ImageListAdapter: RecyclerView.Adapter<ImageListAdapter.ImageViewHolder>()
 
             }
 
-            Glide.with(MAIN)
+            Glide.with(holder.itemView.context)
                 .load(imageList[position].webformatURL)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .centerCrop()

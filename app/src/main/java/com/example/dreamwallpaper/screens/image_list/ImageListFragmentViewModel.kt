@@ -1,36 +1,31 @@
 package com.example.dreamwallpaper.screens.image_list
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.dreamwallpaper.R
 import com.example.dreamwallpaper.Singletons
 import com.example.dreamwallpaper.domain.ResourcesProvider
-import com.example.dreamwallpaper.domain.models.Image
+import com.example.dreamwallpaper.data.retrofit.models.Image
 import com.example.dreamwallpaper.util.Result
 import kotlinx.coroutines.launch
 
 class ImageListFragmentViewModel(application: Application) : AndroidViewModel(application) {
 
-    val imageList: MutableLiveData<Result<Image>> = MutableLiveData()
+    private val _imageList: MutableLiveData<Result<Image>> = MutableLiveData()
+    val imageList: LiveData<Result<Image>> = _imageList
     val pageLiveData: MutableLiveData<Int> = MutableLiveData()
-    val errorState = MutableLiveData<String>(null)
     private val repository = Singletons.imagesRepository
-    private val resourcesProvider = ResourcesProvider(application)
+
 
     fun getImagesByCategory(category: String, page: Int) {
         viewModelScope.launch {
-            when(val result = repository.getImagesByCategory(category = category, page = page)) {
-                is Result.Success -> {
-                    imageList.value = result
-                    pageLiveData.value = page
-                }
-                is Result.Error -> {
-                    errorState.value = resourcesProvider.getString(R.string.no_internet_connection)
-                }
-            }
+            pageLiveData.value = page
+            _imageList.postValue(Result.Loading())
+            _imageList.postValue(repository.getImagesByCategory(category = category, page = page))
+
         }
     }
 }

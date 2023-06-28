@@ -1,6 +1,6 @@
 package com.example.dreamwallpaper.data.retrofit.api
 
-import com.example.dreamwallpaper.domain.models.Image
+import com.example.dreamwallpaper.data.retrofit.models.Image
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

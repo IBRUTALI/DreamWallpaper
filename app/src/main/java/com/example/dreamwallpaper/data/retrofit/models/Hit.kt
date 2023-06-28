@@ -1,4 +1,4 @@
-package com.example.dreamwallpaper.domain.models
+package com.example.dreamwallpaper.data.retrofit.models
 
 import java.io.Serializable
 
