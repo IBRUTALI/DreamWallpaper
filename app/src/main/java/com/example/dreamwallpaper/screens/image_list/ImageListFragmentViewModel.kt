@@ -5,9 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.dreamwallpaper.R
 import com.example.dreamwallpaper.Singletons
-import com.example.dreamwallpaper.domain.ResourcesProvider
 import com.example.dreamwallpaper.data.retrofit.models.Image
 import com.example.dreamwallpaper.util.Result
 import kotlinx.coroutines.launch

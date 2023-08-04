@@ -6,16 +6,18 @@
         <item name="colorPrimaryVariant">@color/white_lite</item>
         <item name="colorOnPrimary">#D6D6D6</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/purple</item>
-        <item name="colorSecondaryVariant">#673AB7</item>
+        <item name="colorSecondary">@color/orange_lite</item>
+        <item name="colorSecondaryVariant">@color/orange_lite</item>
         <item name="colorOnSecondary">@color/black</item>
+        <!-- Action bar. -->
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
-        <item name="android:windowFullscreen">true</item>
-        <item name="android:windowContentOverlay">@null</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" >?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+        <item name="android:statusBarColor">@color/blackLite_200</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <!-- Navigation bar color. -->
+        <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 
     <style name="CustomAlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
@@ -35,15 +37,16 @@
         <item name="colorPrimaryVariant">@color/white_lite</item>
         <item name="colorOnPrimary">#D6D6D6</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/purple</item>
-        <item name="colorSecondaryVariant">@color/purple</item>
+        <item name="colorSecondary">@color/orange_lite</item>
+        <item name="colorSecondaryVariant">@color/orange_lite</item>
         <item name="colorOnSecondary">@color/black</item>
+        <!-- Action bar. -->
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
-        <item name="android:windowFullscreen">true</item>
-        <item name="android:windowContentOverlay">@null</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" >?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+        <item name="android:statusBarColor">@color/blackLite_200</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <!-- Navigation bar color. -->
+        <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 </resources>
