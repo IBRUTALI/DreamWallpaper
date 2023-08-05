@@ -8,32 +8,64 @@
     tools:context=".screens.image_list.ImageListFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/image_list_rv"
+        android:id="@+id/imageRecycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        app:layout_constraintBottom_toTopOf="@+id/tab_layout"
+        app:layout_constraintBottom_toTopOf="@+id/pagingTab"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ProgressBar
+        android:id="@+id/imageListProgress"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:tint="?attr/colorSecondary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/imageReconnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:elevation="0dp"
+        android:focusable="true"
+        android:outlineProvider="none"
+        android:src="@drawable/baseline_update"
+        android:visibility="invisible"
+        app:backgroundTint="#00000000"
+        app:borderWidth="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/orange_lite" />
+
     <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tab_layout"
-        android:contentDescription="Tab"
+        android:id="@+id/pagingTab"
+        android:contentDescription="@string/tab"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:background="@color/black"
+        android:backgroundTint="?attr/colorPrimary"
+        app:layout_collapseMode="pin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btn_back"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:id="@+id/previousPage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:clickable="true"
         android:visibility="invisible"
         android:elevation="0dp"
+        app:borderWidth="0dp"
         app:tint="@color/orange_lite"
         app:backgroundTint="#00000000"
         app:pressedTranslationZ="0dp"
@@ -41,38 +73,39 @@
         android:src="@drawable/ic_back"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image_list_rv"
+        app:layout_constraintTop_toBottomOf="@+id/imageRecycler"
         android:focusable="true" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btn_forward"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:id="@+id/nextPage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:clickable="true"
         android:elevation="0dp"
         app:tint="@color/orange_lite"
+        app:borderWidth="0dp"
         app:backgroundTint="#00000000"
         app:pressedTranslationZ="0dp"
         android:outlineProvider="none"
         android:src="@drawable/ic_forward"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image_list_rv"
+        app:layout_constraintTop_toBottomOf="@+id/imageRecycler"
         android:focusable="true" />
 
     <TextView
-        android:id="@+id/image_list_page"
+        android:id="@+id/currentPage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="1"
+        android:text="@string/page"
         android:fontFamily="@font/tt_norms_regular"
         android:textColor="?android:textColorPrimary"
         android:textSize="26sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btn_forward"
-        app:layout_constraintStart_toEndOf="@+id/btn_back"
-        app:layout_constraintTop_toBottomOf="@+id/image_list_rv" />
+        app:layout_constraintEnd_toStartOf="@+id/nextPage"
+        app:layout_constraintStart_toEndOf="@+id/previousPage"
+        app:layout_constraintTop_toBottomOf="@+id/imageRecycler" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
