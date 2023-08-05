@@ -3,8 +3,7 @@ package com.example.dreamwallpaper.screens.image_list
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -18,6 +17,8 @@ import com.example.dreamwallpaper.databinding.FragmentImageListBinding
 import com.example.dreamwallpaper.data.retrofit.models.Hit
 import kotlin.properties.Delegates
 import com.example.dreamwallpaper.util.Result
+import com.example.dreamwallpaper.util.getAppComponent
+import javax.inject.Inject
 
 class ImageListFragment : Fragment() {
     private var mBinding: FragmentImageListBinding? = null
@@ -25,62 +26,22 @@ class ImageListFragment : Fragment() {
     private val adapter by lazy { ImageListAdapter() }
     private lateinit var currentCategory: String
     private var currentPage by Delegates.notNull<Int>()
-    private val viewModel: ImageListFragmentViewModel by viewModels()
+    private val viewModel: ImageListFragmentViewModel by viewModels {
+        getAppComponent().viewModelsFactory()
+    }
     private var imagesList: List<Hit>? = null
     lateinit var navController: NavController
-
-    private fun loadImages() {
-        binding.imageListRv.adapter = adapter
-        binding.imageListRv.layoutManager = GridLayoutManager(requireContext(), 2)
-
-        if (viewModel.imageList.value == null)
-            viewModel.getImagesByCategory(currentCategory, currentPage)
-
-        viewModel.pageLiveData.observe(viewLifecycleOwner) { page ->
-            binding.imageListPage.text = page.toString()
-            currentPage = page
-            if (page > 1) binding.btnBack.visibility = VISIBLE
-            else binding.btnBack.visibility = INVISIBLE
-        }
-
-        viewModel.imageList.observe(viewLifecycleOwner) { result ->
-            when (result) {
-                is Result.Loading -> {
-
-                }
-                is Result.Success -> {
-                    imagesList = result.data?.hits
-                    adapter.setList(imagesList ?: emptyList())
-                }
-                is Result.Error -> {
-                    Toast.makeText(requireContext(), result.message, Toast.LENGTH_SHORT).show()
-                }
-            }
-
-        }
-    }
-
-    private fun init() {
-        binding.btnBack.setOnClickListener {
-            navController.popBackStack()
-        }
-
-        binding.btnForward.setOnClickListener {
-            val nextPage = currentPage.plus(1)
-            val id = navController.currentDestination?.id
-            val bundle = Bundle()
-            bundle.putInt("page", nextPage)
-            bundle.putString("category", currentCategory)
-            navController.navigate(id!!, bundle)
-        }
-    }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = view.findNavController()
+        setAdapter()
         loadImages()
-        init()
+        pageObserver()
+        listObserver()
+        previousPage()
+        nextPage()
+        updateList()
     }
 
     override fun onCreateView(
@@ -94,6 +55,70 @@ class ImageListFragment : Fragment() {
         onBackPressed()
         return binding.root
     }
+
+    private fun setAdapter() {
+        binding.imageRecycler.adapter = adapter
+        binding.imageRecycler.layoutManager = GridLayoutManager(requireContext(), 2)
+    }
+
+    private fun pageObserver() {
+        viewModel.pageLiveData.observe(viewLifecycleOwner) { page ->
+            binding.currentPage.text = page.toString()
+            currentPage = page
+            if (page > 1) binding.previousPage.visibility = VISIBLE
+            else binding.previousPage.visibility = INVISIBLE
+        }
+    }
+
+    private fun listObserver() {
+        viewModel.imageList.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Result.Loading -> {
+                    binding.imageListProgress.visibility = VISIBLE
+                    binding.imageReconnect.visibility = GONE
+                }
+                is Result.Success -> {
+                    binding.imageListProgress.visibility = GONE
+                    binding.imageReconnect.visibility = GONE
+                    imagesList = result.data?.hits
+                    adapter.setList(imagesList ?: emptyList())
+                }
+                is Result.Error -> {
+                    binding.imageListProgress.visibility = GONE
+                    binding.imageReconnect.visibility = VISIBLE
+                    Toast.makeText(requireContext(), result.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun loadImages() {
+            viewModel.getImagesByCategory(currentCategory, currentPage)
+    }
+
+    private fun nextPage() {
+        binding.nextPage.setOnClickListener {
+            val nextPage = currentPage.plus(1)
+            val id = navController.currentDestination?.id!!
+            val bundle = Bundle()
+            bundle.putInt("page", nextPage)
+            bundle.putString("category", currentCategory)
+            navController.navigate(id, bundle)
+        }
+    }
+
+    private fun previousPage() {
+        binding.previousPage.setOnClickListener {
+            navController.popBackStack()
+        }
+    }
+
+    private fun updateList() {
+        binding.imageReconnect.setOnClickListener {
+            loadImages()
+        }
+    }
+
 
     private fun onBackPressed() {
         val callback: OnBackPressedCallback =

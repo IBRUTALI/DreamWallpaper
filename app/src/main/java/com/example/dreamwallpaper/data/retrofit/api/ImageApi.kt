@@ -5,7 +5,7 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface ApiService {
+interface ImageApi {
     @GET("?key=33106230-b104905cd7ff74ed17e2229af&lang=ru")
     suspend fun getImageListByCategory(
         @Query("category") category: String,

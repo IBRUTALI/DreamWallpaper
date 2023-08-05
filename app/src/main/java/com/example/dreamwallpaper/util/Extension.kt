@@ -2,6 +2,9 @@ package com.example.dreamwallpaper.util
 
 import android.os.Bundle
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import com.example.dreamwallpaper.App
+import com.example.dreamwallpaper.di.AppComponent
 import com.google.android.material.appbar.MaterialToolbar
 import java.util.regex.Pattern
 
@@ -25,3 +28,6 @@ fun MaterialToolbar.setTitle(label: CharSequence?, textView: TextView, arguments
         textView.text = title
     }
 }
+
+fun Fragment.getAppComponent(): AppComponent =
+    (requireActivity().application as App).appComponent
