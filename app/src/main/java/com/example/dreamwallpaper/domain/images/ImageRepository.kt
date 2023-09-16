@@ -1,4 +1,4 @@
-package com.example.dreamwallpaper.data.retrofit.source
+package com.example.dreamwallpaper.domain.images
 
 import com.example.dreamwallpaper.data.retrofit.models.Image
 import com.example.dreamwallpaper.util.Result

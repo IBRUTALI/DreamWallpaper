@@ -1,20 +1,24 @@
 <resources>
     <string name="app_name" translatable="false">Dream Wallpaper</string>
     <string name="app_name_lines_2" translatable="false">Dream \nWallpaper</string>
-        <string name="set_image_as_wallpaper">Set image as wallpaper?</string>
-        <string name="yes">Yes</string>
-        <string name="no">No</string>
-        <string name="nature">Nature</string>
-        <string name="fashion">Fashion</string>
-        <string name="backgrounds">Backgrounds</string>
-        <string name="science">Science</string>
-        <string name="places">Places</string>
-        <string name="animals">Animals</string>
-        <string name="sports">Sports</string>
-        <string name="category">Category</string>
-        <string name="wallpapers">Wallpapers</string>
-        <string name="no_internet_connection">No internet connection</string>
-        <string name="server_error">Server error</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="nature">Nature</string>
+    <string name="fashion">Fashion</string>
+    <string name="backgrounds">Backgrounds</string>
+    <string name="science">Science</string>
+    <string name="places">Places</string>
+    <string name="animals">Animals</string>
+    <string name="sports">Sports</string>
+    <string name="category">Category</string>
+    <string name="wallpapers">Wallpapers</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="server_error">Server error</string>
     <string name="tab">Tab</string>
     <string name="page">Page</string>
+    <!--  Alert Dialog  -->
+    <string name="set_image_as_wallpaper">Set image as wallpaper?</string>
+    <string name="set_wallpaper">Set wallpaper</string>
+    <string name="download_image">Download image</string>
+    <string name="you_want_download_image">You want download image?</string>
 </resources>

@@ -1,6 +1,5 @@
 package com.example.dreamwallpaper.screens.image
 
-import android.app.AlertDialog
 import android.app.WallpaperManager
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
@@ -12,12 +11,20 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.work.Constraints
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.example.dreamwallpaper.R
 import com.example.dreamwallpaper.databinding.FragmentFullscreenImageBinding
 import com.example.dreamwallpaper.data.retrofit.models.Hit
+import com.example.dreamwallpaper.domain.download.FileDownloadWorker
+import com.example.dreamwallpaper.util.showAlert
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -26,6 +33,7 @@ class ImageFullscreenFragment : Fragment() {
     private var mBinding: FragmentFullscreenImageBinding? = null
     private val binding get() = mBinding!!
     private lateinit var currentImage: Hit
+    private lateinit var workManager: WorkManager
     private var bitmap: Bitmap ?= null
 
     private fun init() {
@@ -45,15 +53,13 @@ class ImageFullscreenFragment : Fragment() {
 
         binding.fullscreenImage.scaleType = ImageView.ScaleType.FIT_XY
 
-        binding.btnSetWallpaper.setOnClickListener {
-            if(bitmap != null) dialogSetWallpaper()
-        }
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         init()
+        setWallpaper()
+        downloadImage()
     }
 
     override fun onCreateView(
@@ -69,22 +75,64 @@ class ImageFullscreenFragment : Fragment() {
         return binding.root
     }
 
+    private fun downloadImage() {
+        binding.btnDownloadWallpaper.setOnClickListener {
+            showAlert(
+                getString(R.string.download_image),
+                getString(R.string.you_want_download_image)
+            ) {
+                initWorkManager()
+            }
+        }
+    }
 
-    private fun dialogSetWallpaper() {
-        val builder = AlertDialog.Builder(requireContext(), R.style.CustomAlertDialog)
-        builder.setTitle(getString(R.string.set_image_as_wallpaper))
-            .setPositiveButton(getString(R.string.yes)) { _, _ ->
-                lifecycleScope.launch(Dispatchers.IO) {
-                    val wallpaperManager = WallpaperManager.getInstance(requireContext())
-                    try {
-                        wallpaperManager.setBitmap(bitmap)
-                    } catch (e: IOException) {
-                        e.printStackTrace()
+
+    private fun setWallpaper() {
+        binding.btnSetWallpaper.setOnClickListener {
+            if(bitmap != null)  {
+                showAlert(
+                    getString(R.string.set_wallpaper),
+                    getString(R.string.set_image_as_wallpaper)
+                ) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        val wallpaperManager = WallpaperManager.getInstance(requireContext())
+                        try {
+                            wallpaperManager.setBitmap(bitmap)
+                        } catch (e: IOException) {
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
-            .setNegativeButton(getString(R.string.no)) { _, _ ->}
-        builder.create().show()
+        }
+    }
+
+    private fun initWorkManager() {
+        workManager = WorkManager.getInstance(requireContext())
+        val data = Data.Builder()
+
+        data.apply {
+            putString(FileDownloadWorker.FileParams.KEY_FILE_NAME, "Image")
+            putString(FileDownloadWorker.FileParams.KEY_FILE_URL, currentImage.largeImageURL)
+            putString(FileDownloadWorker.FileParams.KEY_FILE_TYPE, "PNG")
+        }
+
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .setRequiresStorageNotLow(true)
+            .setRequiresBatteryNotLow(true)
+            .build()
+
+        val fileDownloadWorker = OneTimeWorkRequestBuilder<FileDownloadWorker>()
+            .setConstraints(constraints)
+            .setInputData(data.build())
+            .build()
+
+        workManager.enqueueUniqueWork(
+            "oneFileDownloadWork_${System.currentTimeMillis()}",
+            ExistingWorkPolicy.KEEP,
+            fileDownloadWorker
+        )
     }
 
     override fun onDestroy() {

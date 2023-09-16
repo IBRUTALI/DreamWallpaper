@@ -45,6 +45,23 @@
         android:clickable="true"
         android:src="@drawable/ic_baseline_wallpaper_24"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:focusable="true" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_download_wallpaper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:clickable="true"
+        android:elevation="0dp"
+        android:focusable="true"
+        android:outlineProvider="none"
+        android:src="@drawable/baseline_file_download_24"
+        app:backgroundTint="#00000000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_set_wallpaper"
+        app:layout_constraintTop_toTopOf="@+id/btn_set_wallpaper"
+        app:tint="?attr/colorSecondary" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
