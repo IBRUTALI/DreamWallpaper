@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="set_image_as_wallpaper">Установить изображение как обои?</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="nature">Природа</string>
@@ -14,4 +13,11 @@
     <string name="wallpapers">Обои</string>
     <string name="no_internet_connection">Нет подключения к интернету</string>
     <string name="server_error">Ошибка сервера</string>
+    <string name="tab">Tab</string>
+    <string name="page">Страница</string>
+    <!--  Alert Dialog  -->
+    <string name="set_image_as_wallpaper">Установить изображение как обои?</string>
+    <string name="set_wallpaper">Установить обои</string>
+    <string name="download_image">Скачать изображение</string>
+    <string name="you_want_download_image">Вы хотите скачать изображение?</string>
 </resources>

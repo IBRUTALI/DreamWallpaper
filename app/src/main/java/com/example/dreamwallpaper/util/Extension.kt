@@ -1,9 +1,11 @@
 package com.example.dreamwallpaper.util
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.dreamwallpaper.App
+import com.example.dreamwallpaper.R
 import com.example.dreamwallpaper.di.AppComponent
 import com.google.android.material.appbar.MaterialToolbar
 import java.util.regex.Pattern
@@ -31,3 +33,18 @@ fun MaterialToolbar.setTitle(label: CharSequence?, textView: TextView, arguments
 
 fun Fragment.getAppComponent(): AppComponent =
     (requireActivity().application as App).appComponent
+
+fun Fragment.showAlert(
+    title: String,
+    message: String,
+    onClick: () -> Unit = { }
+) {
+    AlertDialog.Builder(requireContext())
+        .setTitle(title)
+        .setMessage(message)
+        .setPositiveButton(R.string.yes) { _, _ ->
+            onClick.invoke()
+        }
+        .setNegativeButton(getString(R.string.no)) { _, _ -> }
+        .show()
+}

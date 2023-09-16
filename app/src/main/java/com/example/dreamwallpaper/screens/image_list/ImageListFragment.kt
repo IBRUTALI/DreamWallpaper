@@ -18,7 +18,6 @@ import com.example.dreamwallpaper.data.retrofit.models.Hit
 import kotlin.properties.Delegates
 import com.example.dreamwallpaper.util.Result
 import com.example.dreamwallpaper.util.getAppComponent
-import javax.inject.Inject
 
 class ImageListFragment : Fragment() {
     private var mBinding: FragmentImageListBinding? = null
@@ -38,7 +37,7 @@ class ImageListFragment : Fragment() {
         setAdapter()
         loadImages()
         pageObserver()
-        listObserver()
+        subscribeImages()
         previousPage()
         nextPage()
         updateList()
@@ -70,7 +69,7 @@ class ImageListFragment : Fragment() {
         }
     }
 
-    private fun listObserver() {
+    private fun subscribeImages() {
         viewModel.imageList.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Loading -> {

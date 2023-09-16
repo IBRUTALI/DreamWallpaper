@@ -2,7 +2,7 @@ package com.example.dreamwallpaper.screens.image_list
 
 import androidx.lifecycle.*
 import com.example.dreamwallpaper.data.retrofit.models.Image
-import com.example.dreamwallpaper.data.retrofit.source.ImageRepository
+import com.example.dreamwallpaper.domain.images.ImageRepository
 import com.example.dreamwallpaper.util.Result
 import kotlinx.coroutines.launch
 import javax.inject.Inject
