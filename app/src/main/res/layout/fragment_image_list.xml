@@ -12,6 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clipToPadding="false"
+        android:paddingHorizontal="2dp"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@+id/pagingTab"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,11 +25,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="invisible"
-        app:tint="?attr/colorSecondary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="?attr/colorSecondary"
+        tools:visibility="visible" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/imageReconnect"
@@ -45,15 +48,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/orange_lite" />
+        app:tint="@color/orange_lite"
+        tools:visibility="visible" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/pagingTab"
-        android:contentDescription="@string/tab"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="?attr/colorPrimary"
-        app:layout_collapseMode="pin"
+        android:contentDescription="@string/tab"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -63,18 +66,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:visibility="invisible"
         android:elevation="0dp"
-        app:borderWidth="0dp"
-        app:tint="@color/orange_lite"
-        app:backgroundTint="#00000000"
-        app:pressedTranslationZ="0dp"
+        android:focusable="true"
         android:outlineProvider="none"
         android:src="@drawable/ic_back"
+        android:visibility="invisible"
+        app:backgroundTint="#00000000"
+        app:borderWidth="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageRecycler"
-        android:focusable="true" />
+        app:pressedTranslationZ="0dp"
+        app:tint="@color/orange_lite"
+        tools:visibility="visible" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/nextPage"
@@ -82,23 +86,23 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:elevation="0dp"
-        app:tint="@color/orange_lite"
-        app:borderWidth="0dp"
-        app:backgroundTint="#00000000"
-        app:pressedTranslationZ="0dp"
+        android:focusable="true"
         android:outlineProvider="none"
         android:src="@drawable/ic_forward"
+        app:backgroundTint="#00000000"
+        app:borderWidth="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageRecycler"
-        android:focusable="true" />
+        app:pressedTranslationZ="0dp"
+        app:tint="@color/orange_lite" />
 
     <TextView
         android:id="@+id/currentPage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/page"
         android:fontFamily="@font/tt_norms_regular"
+        android:text="@string/page"
         android:textColor="?android:textColorPrimary"
         android:textSize="26sp"
         android:textStyle="bold"

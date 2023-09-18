@@ -12,6 +12,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.dreamwallpaper.R
 import com.example.dreamwallpaper.databinding.FragmentImageListBinding
 import com.example.dreamwallpaper.data.retrofit.models.Hit
@@ -36,7 +38,6 @@ class ImageListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         navController = view.findNavController()
         setAdapter()
-        loadImages()
         pageObserver()
         subscribeImages()
         previousPage()
@@ -57,12 +58,12 @@ class ImageListFragment : Fragment() {
     }
 
     private fun setAdapter() {
+        binding.imageRecycler.layoutManager = StaggeredGridLayoutManager(2 , StaggeredGridLayoutManager.VERTICAL)
         binding.imageRecycler.adapter = adapter
-        binding.imageRecycler.layoutManager = GridLayoutManager(requireContext(), 2)
     }
 
     private fun pageObserver() {
-        viewModel.pageLiveData.observe(viewLifecycleOwner) { page ->
+        viewModel.page.observe(viewLifecycleOwner) { page ->
             binding.currentPage.text = page.toString()
             currentPage = page
             if (page > 1) binding.previousPage.visibility = VISIBLE
