@@ -13,14 +13,25 @@ class ImageListFragmentViewModel @Inject constructor(
 
     private val _imageList: MutableLiveData<Result<Image>> = MutableLiveData()
     val imageList: LiveData<Result<Image>> = _imageList
-    val pageLiveData: MutableLiveData<Int> = MutableLiveData()
 
+    private val _page: MutableLiveData<Int> = MutableLiveData()
+    val page: LiveData<Int> = _page
 
-    fun getImagesByCategory(category: String, page: Int) {
+    private val _category: MutableLiveData<String> = MutableLiveData()
+    val category: LiveData<String> = _category
+
+    init {
+        getImagesByCategory(
+            category.value ?: "",
+            page.value ?: 0
+        )
+    }
+
+    fun getImagesByCategory(category: String, newPage: Int) {
         viewModelScope.launch {
-            pageLiveData.value = page
+            _page.value = newPage
             _imageList.postValue(Result.Loading())
-            _imageList.postValue(repository.getImagesByCategory(category = category, page = page))
+            _imageList.postValue(repository.getImagesByCategory(category = category, page = newPage))
 
         }
     }

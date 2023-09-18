@@ -49,7 +49,7 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
-    fun getLocalizedResources(context: Context, desiredLocale: Locale?): Resources {
+    private fun getLocalizedResources(context: Context, desiredLocale: Locale?): Resources {
         var conf: Configuration = context.resources.configuration
         conf = Configuration(conf)
         conf.setLocale(desiredLocale)
@@ -63,9 +63,11 @@ class MainFragment : Fragment() {
     }
 
     companion object {
+        const val CATEGORY = "category"
+
         fun clickCategory(string: String, view: View) {
             val bundle = Bundle()
-            bundle.putString("category", string)
+            bundle.putString(CATEGORY, string)
             view.findNavController().navigate(R.id.action_mainFragment_to_imageListFragment, bundle)
         }
     }
