@@ -1,5 +1,6 @@
 package com.example.dreamwallpaper.screens.image
 
+import android.Manifest
 import android.app.WallpaperManager
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
@@ -9,6 +10,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.work.Constraints
@@ -21,9 +25,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.example.dreamwallpaper.R
-import com.example.dreamwallpaper.databinding.FragmentFullscreenImageBinding
 import com.example.dreamwallpaper.data.retrofit.models.Hit
+import com.example.dreamwallpaper.databinding.FragmentFullscreenImageBinding
 import com.example.dreamwallpaper.domain.download.FileDownloadWorker
+import com.example.dreamwallpaper.screens.image_list.ImageListFragment.Companion.IMAGE
 import com.example.dreamwallpaper.util.showAlert
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,7 +39,8 @@ class ImageFullscreenFragment : Fragment() {
     private val binding get() = mBinding!!
     private lateinit var currentImage: Hit
     private lateinit var workManager: WorkManager
-    private var bitmap: Bitmap ?= null
+    private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
+    private var bitmap: Bitmap? = null
 
     private fun init() {
 
@@ -58,6 +64,7 @@ class ImageFullscreenFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         init()
+        registerForActivityResult()
         setWallpaper()
         downloadImage()
     }
@@ -67,7 +74,7 @@ class ImageFullscreenFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         mBinding = FragmentFullscreenImageBinding.inflate(layoutInflater, container, false)
-        currentImage = arguments?.getSerializable("image") as Hit
+        currentImage = arguments?.getSerializable(IMAGE) as Hit
 
         if (currentImage.imageWidth > currentImage.imageHeight) {
             activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
@@ -81,7 +88,13 @@ class ImageFullscreenFragment : Fragment() {
                 getString(R.string.download_image),
                 getString(R.string.you_want_download_image)
             ) {
-                initWorkManager()
+                requestPermissionLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
+                )
+
             }
         }
     }
@@ -89,7 +102,7 @@ class ImageFullscreenFragment : Fragment() {
 
     private fun setWallpaper() {
         binding.btnSetWallpaper.setOnClickListener {
-            if(bitmap != null)  {
+            if (bitmap != null) {
                 showAlert(
                     getString(R.string.set_wallpaper),
                     getString(R.string.set_image_as_wallpaper)
@@ -105,6 +118,29 @@ class ImageFullscreenFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun registerForActivityResult() {
+        requestPermissionLauncher =
+            registerForActivityResult(
+                ActivityResultContracts.RequestMultiplePermissions()
+            ) {
+
+                var isGranted = false
+                it.forEach { b ->
+                    isGranted = b.value
+                }
+
+                if (isGranted) {
+                    initWorkManager()
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.permission_not_granted), Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+            }
     }
 
     private fun initWorkManager() {

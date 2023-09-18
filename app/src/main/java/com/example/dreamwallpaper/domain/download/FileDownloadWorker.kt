@@ -84,9 +84,7 @@ class FileDownloadWorker(
         context: Context
     ): Uri? {
         val mimeType = when (fileType) {
-            "PDF" -> "application/pdf"
             "PNG" -> "image/png"
-            "MP4" -> "video/mp4"
             else -> ""
         }
 
@@ -96,7 +94,7 @@ class FileDownloadWorker(
             val contentValues = ContentValues().apply {
                 put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
                 put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
-                put(MediaStore.MediaColumns.RELATIVE_PATH, "Download/DownloaderDemo")
+                put(MediaStore.MediaColumns.RELATIVE_PATH, "Download/DreamWallpaper")
             }
 
             val resolver = context.contentResolver

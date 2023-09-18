@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.dreamwallpaper.R
 import com.example.dreamwallpaper.databinding.FragmentImageListBinding
 import com.example.dreamwallpaper.data.retrofit.models.Hit
+import com.example.dreamwallpaper.screens.main.MainFragment.Companion.CATEGORY
 import kotlin.properties.Delegates
 import com.example.dreamwallpaper.util.Result
 import com.example.dreamwallpaper.util.getAppComponent
@@ -48,8 +49,8 @@ class ImageListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         mBinding = FragmentImageListBinding.inflate(layoutInflater, container, false)
-        currentCategory = arguments?.getString("category") as String
-        currentPage = arguments?.getInt("page") as Int
+        currentCategory = arguments?.getString(CATEGORY) as String
+        currentPage = arguments?.getInt(PAGE) as Int
         if (currentPage == 0) currentPage = 1
         onBackPressed()
         return binding.root
@@ -100,8 +101,8 @@ class ImageListFragment : Fragment() {
             val nextPage = currentPage.plus(1)
             val id = navController.currentDestination?.id!!
             val bundle = Bundle()
-            bundle.putInt("page", nextPage)
-            bundle.putString("category", currentCategory)
+            bundle.putInt(PAGE, nextPage)
+            bundle.putString(CATEGORY, currentCategory)
             navController.navigate(id, bundle)
         }
     }
@@ -137,9 +138,12 @@ class ImageListFragment : Fragment() {
     }
 
     companion object {
+        const val PAGE = "page"
+        const val IMAGE = "image"
+
         fun clickImage(model: Hit, view: View) {
             val bundle = Bundle()
-            bundle.putSerializable("image", model)
+            bundle.putSerializable(IMAGE, model)
             view.findNavController()
                 .navigate(R.id.action_imageListFragment_to_imageFullscreenFragment, bundle)
         }
