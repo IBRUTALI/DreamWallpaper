@@ -8,31 +8,28 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.dreamwallpaper.R
-import com.example.dreamwallpaper.databinding.FragmentImageListBinding
 import com.example.dreamwallpaper.data.retrofit.models.Hit
+import com.example.dreamwallpaper.databinding.FragmentImageListBinding
 import com.example.dreamwallpaper.screens.main.MainFragment.Companion.CATEGORY
-import kotlin.properties.Delegates
 import com.example.dreamwallpaper.util.Result
 import com.example.dreamwallpaper.util.getAppComponent
+import com.example.dreamwallpaper.util.lazyViewModel
 
 class ImageListFragment : Fragment() {
     private var mBinding: FragmentImageListBinding? = null
     private val binding get() = mBinding!!
     private val adapter by lazy { ImageListAdapter() }
-    private lateinit var currentCategory: String
-    private var currentPage by Delegates.notNull<Int>()
-    private val viewModel: ImageListFragmentViewModel by viewModels {
-        getAppComponent().viewModelsFactory()
-    }
-    private var imagesList: List<Hit>? = null
     lateinit var navController: NavController
+    private val viewModel: ImageListFragmentViewModel by lazyViewModel {
+        getAppComponent().imageListFragmentViewModel().create(
+            getCurrentCategoryFromBundle(),
+            getCurrentPageFromBundle()
+        )
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -50,22 +47,18 @@ class ImageListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         mBinding = FragmentImageListBinding.inflate(layoutInflater, container, false)
-        currentCategory = arguments?.getString(CATEGORY) as String
-        currentPage = arguments?.getInt(PAGE) as Int
-        if (currentPage == 0) currentPage = 1
-        onBackPressed()
         return binding.root
     }
 
     private fun setAdapter() {
-        binding.imageRecycler.layoutManager = StaggeredGridLayoutManager(2 , StaggeredGridLayoutManager.VERTICAL)
+        binding.imageRecycler.layoutManager =
+            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         binding.imageRecycler.adapter = adapter
     }
 
     private fun pageObserver() {
         viewModel.page.observe(viewLifecycleOwner) { page ->
             binding.currentPage.text = page.toString()
-            currentPage = page
             if (page > 1) binding.previousPage.visibility = VISIBLE
             else binding.previousPage.visibility = INVISIBLE
         }
@@ -78,12 +71,13 @@ class ImageListFragment : Fragment() {
                     binding.imageListProgress.visibility = VISIBLE
                     binding.imageReconnect.visibility = GONE
                 }
+
                 is Result.Success -> {
                     binding.imageListProgress.visibility = GONE
                     binding.imageReconnect.visibility = GONE
-                    imagesList = result.data?.hits
-                    adapter.setList(imagesList ?: emptyList())
+                    adapter.setList(result.data?.hits ?: emptyList())
                 }
+
                 is Result.Error -> {
                     binding.imageListProgress.visibility = GONE
                     binding.imageReconnect.visibility = VISIBLE
@@ -94,16 +88,20 @@ class ImageListFragment : Fragment() {
     }
 
     private fun loadImages() {
-            viewModel.getImagesByCategory(currentCategory, currentPage)
+        viewModel.getImagesByCategory(
+            viewModel.category.value!!,
+            viewModel.page.value
+        )
     }
 
     private fun nextPage() {
         binding.nextPage.setOnClickListener {
-            val nextPage = currentPage.plus(1)
+            val nextPage = viewModel.page.value!! + 1
             val id = navController.currentDestination?.id!!
-            val bundle = Bundle()
-            bundle.putInt(PAGE, nextPage)
-            bundle.putString(CATEGORY, currentCategory)
+            val bundle = setBundleArguments(
+                getCurrentCategoryFromBundle(),
+                nextPage
+            )
             navController.navigate(id, bundle)
         }
     }
@@ -121,16 +119,19 @@ class ImageListFragment : Fragment() {
     }
 
 
-    private fun onBackPressed() {
-        val callback: OnBackPressedCallback =
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    navController.currentDestination?.let {
-                        navController.navigate(id)
-                    }
-                }
-            }
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+    private fun setBundleArguments(category: String, page: Int): Bundle {
+        return Bundle().apply {
+            putString(CATEGORY, category)
+            putInt(PAGE, page)
+        }
+    }
+
+    private fun getCurrentCategoryFromBundle(): String {
+        return arguments?.getString(CATEGORY) as String
+    }
+
+    private fun getCurrentPageFromBundle(): Int? {
+        return arguments?.getInt(PAGE)
     }
 
     override fun onDestroy() {

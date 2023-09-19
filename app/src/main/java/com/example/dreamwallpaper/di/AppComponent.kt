@@ -2,6 +2,7 @@ package com.example.dreamwallpaper.di
 
 import com.example.dreamwallpaper.screens.ViewModelFactory
 import com.example.dreamwallpaper.screens.image_list.ImageListFragment
+import com.example.dreamwallpaper.screens.image_list.ImageListFragmentViewModel
 import dagger.Component
 import javax.inject.Scope
 import javax.inject.Singleton
@@ -14,6 +15,6 @@ import javax.inject.Singleton
 interface AppComponent {
 
     fun injectImageListFragment(fragment: ImageListFragment)
-    fun viewModelsFactory(): ViewModelFactory
+    fun imageListFragmentViewModel(): ImageListFragmentViewModel.Factory
 
 }
