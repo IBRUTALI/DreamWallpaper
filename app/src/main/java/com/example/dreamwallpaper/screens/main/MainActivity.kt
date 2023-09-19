@@ -1,6 +1,7 @@
 package com.example.dreamwallpaper.screens.main
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
@@ -40,18 +41,24 @@ class MainActivity : AppCompatActivity() {
                     setNavigationIconTint(resources.getColor(R.color.orange_lite))
                 }
             }
+            onCustomToolbarBackPress()
         }
 
     }
 
     override fun onBackPressed() {
         if (navController.currentDestination?.id == R.id.mainFragment) {
-            finish()
+            moveTaskToBack(true)
         } else {
             navController.popBackStack()
         }
     }
 
+    private fun onCustomToolbarBackPress() {
+        binding.toolbar.setNavigationOnClickListener {
+            navController.navigate(R.id.mainFragment)
+        }
+    }
     override fun onDestroy() {
         super.onDestroy()
         mBinding = null

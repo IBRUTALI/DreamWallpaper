@@ -47,7 +47,6 @@ class ImageListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         mBinding = FragmentImageListBinding.inflate(layoutInflater, container, false)
-        onBackPressed()
         return binding.root
     }
 
@@ -120,17 +119,7 @@ class ImageListFragment : Fragment() {
     }
 
 
-    private fun onBackPressed() {
-        val callback: OnBackPressedCallback =
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    navController.currentDestination?.let {
-                        navController.navigate(id)
-                    }
-                }
-            }
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
-    }
+
 
     private fun setBundleArguments(category: String, page: Int): Bundle {
         return Bundle().apply {
