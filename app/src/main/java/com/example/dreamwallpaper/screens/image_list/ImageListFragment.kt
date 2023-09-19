@@ -119,8 +119,6 @@ class ImageListFragment : Fragment() {
     }
 
 
-
-
     private fun setBundleArguments(category: String, page: Int): Bundle {
         return Bundle().apply {
             putString(CATEGORY, category)
