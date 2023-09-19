@@ -3,9 +3,7 @@ package com.example.dreamwallpaper.screens.main
 import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.get
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.AppBarConfiguration
@@ -13,8 +11,6 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.dreamwallpaper.R
 import com.example.dreamwallpaper.databinding.ActivityMainBinding
 import com.example.dreamwallpaper.util.setTitle
-import com.google.android.material.appbar.MaterialToolbar
-import java.util.regex.Pattern
 
 class MainActivity : AppCompatActivity() {
     private var mBinding: ActivityMainBinding? = null
