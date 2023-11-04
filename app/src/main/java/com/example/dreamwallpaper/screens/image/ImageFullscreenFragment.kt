@@ -47,6 +47,7 @@ class ImageFullscreenFragment : Fragment() {
         Glide.with(this)
             .asBitmap()
             .load(currentImage.largeImageURL)
+            .fitCenter()
             .into(object : CustomTarget<Bitmap>() {
                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                     binding.fullscreenImage.setImageBitmap(resource)
@@ -56,8 +57,6 @@ class ImageFullscreenFragment : Fragment() {
 
                 override fun onLoadCleared(placeholder: Drawable?) {}
             })
-
-        binding.fullscreenImage.scaleType = ImageView.ScaleType.FIT_XY
 
     }
 
@@ -75,10 +74,6 @@ class ImageFullscreenFragment : Fragment() {
     ): View {
         mBinding = FragmentFullscreenImageBinding.inflate(layoutInflater, container, false)
         currentImage = arguments?.getSerializable(IMAGE) as Hit
-
-        if (currentImage.imageWidth > currentImage.imageHeight) {
-            activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-        }
         return binding.root
     }
 
@@ -174,6 +169,5 @@ class ImageFullscreenFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         mBinding = null
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
     }
 }

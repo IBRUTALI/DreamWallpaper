@@ -6,7 +6,6 @@ import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -23,7 +22,7 @@ class ImageListFragment : Fragment() {
     private var mBinding: FragmentImageListBinding? = null
     private val binding get() = mBinding!!
     private val adapter by lazy { ImageListAdapter() }
-    lateinit var navController: NavController
+    private lateinit var navController: NavController
     private val viewModel: ImageListFragmentViewModel by lazyViewModel {
         getAppComponent().imageListFragmentViewModel().create(
             getCurrentCategoryFromBundle(),
