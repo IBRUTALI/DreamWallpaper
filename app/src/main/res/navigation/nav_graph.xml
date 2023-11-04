@@ -26,6 +26,6 @@
     <fragment
         android:id="@+id/imageFullscreenFragment"
         android:name="com.example.dreamwallpaper.screens.image.ImageFullscreenFragment"
-        android:label="fragment_fullscreen_image"
+        android:label=""
         tools:layout="@layout/fragment_fullscreen_image" />
 </navigation>

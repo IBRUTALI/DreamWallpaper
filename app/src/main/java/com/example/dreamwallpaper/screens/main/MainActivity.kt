@@ -1,7 +1,6 @@
 package com.example.dreamwallpaper.screens.main
 
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
@@ -28,13 +27,8 @@ class MainActivity : AppCompatActivity() {
             setupWithNavController(navController, appBarConfiguration)
             navController.addOnDestinationChangedListener { _, destination, arg ->
                 binding.toolbar.setTitle(destination.label, binding.toolbarTextView, arg)
-                if (destination.id == R.id.imageFullscreenFragment) {
-                    visibility = GONE
-                    binding.collapsingToolbarLayout.visibility = GONE
-                } else {
                     visibility = VISIBLE
-                    binding.collapsingToolbarLayout.visibility = VISIBLE
-                }
+                    binding.appBarLayout.visibility = VISIBLE
                 val isTopLevelDestination = appBarConfiguration.topLevelDestinations.contains(destination.id)
                 if(!isTopLevelDestination){
                     setNavigationIcon(R.drawable.ic_back)

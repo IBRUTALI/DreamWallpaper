@@ -3,7 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/Theme.DreamWallpaper.NoActionBar"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".screens.image.ImageFullscreenFragment">
@@ -11,25 +10,23 @@
     <ProgressBar
         android:id="@+id/fullscreen_progress"
         style="@style/Widget.AppCompat.ProgressBar"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
+    <com.example.dreamwallpaper.screens.image.ZoomableImageView
         android:id="@+id/fullscreen_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        tools:src="@tools:sample/backgrounds/scenic" />
+        tools:src="@drawable/nature" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_set_wallpaper"
@@ -43,6 +40,7 @@
         app:pressedTranslationZ="0dp"
         android:outlineProvider="none"
         android:clickable="true"
+        android:visibility="gone"
         android:src="@drawable/ic_baseline_wallpaper_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -52,14 +50,14 @@
         android:id="@+id/btn_download_wallpaper"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:clickable="true"
         android:elevation="0dp"
         android:focusable="true"
+        android:visibility="gone"
         android:outlineProvider="none"
         android:src="@drawable/baseline_file_download_24"
         app:backgroundTint="#00000000"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_set_wallpaper"
         app:layout_constraintEnd_toStartOf="@+id/btn_set_wallpaper"
         app:layout_constraintTop_toTopOf="@+id/btn_set_wallpaper"
         app:tint="?attr/colorSecondary" />
