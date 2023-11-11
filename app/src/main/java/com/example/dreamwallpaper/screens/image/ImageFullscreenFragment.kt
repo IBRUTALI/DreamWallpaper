@@ -7,14 +7,21 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.work.Constraints
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
@@ -62,10 +69,9 @@ class ImageFullscreenFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setHasOptionsMenu(true)
         init()
         registerForActivityResult()
-        setWallpaper()
-        downloadImage()
     }
 
     override fun onCreateView(
@@ -78,37 +84,33 @@ class ImageFullscreenFragment : Fragment() {
     }
 
     private fun downloadImage() {
-        binding.btnDownloadWallpaper.setOnClickListener {
-            showAlert(
-                getString(R.string.download_image),
-                getString(R.string.you_want_download_image)
-            ) {
-                requestPermissionLauncher.launch(
-                    arrayOf(
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    )
+        showAlert(
+            getString(R.string.download_image),
+            getString(R.string.you_want_download_image)
+        ) {
+            requestPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
                 )
+            )
 
-            }
         }
     }
 
 
     private fun setWallpaper() {
-        binding.btnSetWallpaper.setOnClickListener {
-            if (bitmap != null) {
-                showAlert(
-                    getString(R.string.set_wallpaper),
-                    getString(R.string.set_image_as_wallpaper)
-                ) {
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        val wallpaperManager = WallpaperManager.getInstance(requireContext())
-                        try {
-                            wallpaperManager.setBitmap(bitmap)
-                        } catch (e: IOException) {
-                            e.printStackTrace()
-                        }
+        if (bitmap != null) {
+            showAlert(
+                getString(R.string.set_wallpaper),
+                getString(R.string.set_image_as_wallpaper)
+            ) {
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val wallpaperManager = WallpaperManager.getInstance(requireContext())
+                    try {
+                        wallpaperManager.setBitmap(bitmap)
+                    } catch (e: IOException) {
+                        e.printStackTrace()
                     }
                 }
             }
@@ -165,6 +167,29 @@ class ImageFullscreenFragment : Fragment() {
             fileDownloadWorker
         )
     }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        inflater.inflate(R.menu.menu_image_fullscreen, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.actionDownloadImage -> {
+                downloadImage()
+                true
+            }
+
+            R.id.actionSetWallpaper -> {
+                setWallpaper()
+                true
+            }
+
+            else -> false
+        }
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()

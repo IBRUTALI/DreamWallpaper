@@ -1,7 +1,7 @@
 package com.example.dreamwallpaper.screens.main
 
 import android.os.Bundle
-import android.view.View.GONE
+import android.view.Menu
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
             setupWithNavController(navController, appBarConfiguration)
             navController.addOnDestinationChangedListener { _, destination, arg ->
                 binding.toolbar.setTitle(destination.label, binding.toolbarTextView, arg)
+                setSupportActionBar(binding.toolbar)
                     visibility = VISIBLE
                     binding.appBarLayout.visibility = VISIBLE
                 val isTopLevelDestination = appBarConfiguration.topLevelDestinations.contains(destination.id)
@@ -53,6 +54,12 @@ class MainActivity : AppCompatActivity() {
             navController.navigate(R.id.mainFragment)
         }
     }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return false
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         mBinding = null

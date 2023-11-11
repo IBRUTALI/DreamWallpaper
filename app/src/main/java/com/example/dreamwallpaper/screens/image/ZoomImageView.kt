@@ -1,214 +1,267 @@
 package com.example.dreamwallpaper.screens.image
 
+import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.graphics.PointF
 import android.util.AttributeSet
-import android.graphics.Matrix
+import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
-import android.view.ScaleGestureDetector.SimpleOnScaleGestureListener
+import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.appcompat.widget.AppCompatImageView
-import kotlin.math.abs
-import kotlin.math.roundToInt
 
+class ZoomImageView : AppCompatImageView, View.OnTouchListener,
+    GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
 
-class ZoomableImageView(context: Context, attr: AttributeSet?) :
-    AppCompatImageView(context, attr) {
-    private val _matrix: Matrix = Matrix()
-    private var mode = NONE
-    private var last = PointF()
-    private var start = PointF()
-    private var minScale = 1f
-    private var maxScale = 4f
-    private var m: FloatArray
-    private var redundantXSpace = 0f
-    private var redundantYSpace = 0f
-    private var width = 0f
-    private var height = 0f
-    private var saveScale = 1f
-    private var right = 0f
-    private var bottom = 0f
-    private var origWidth = 0f
-    private var origHeight = 0f
-    private var bmWidth = 0f
-    private var bmHeight = 0f
-    private var mScaleDetector: ScaleGestureDetector
-    private val _context: Context
+    //Construction details
+    private var myContext: Context? = null
+    private var myScaleDetector: ScaleGestureDetector? = null
+    private var myGestureDetector: GestureDetector? = null
+    private var myMatrix: Matrix? = null
+    private var matrixValue: FloatArray? = null
+    private var zoomMode = NONE
 
-    init {
+    //Scales
+    var presentScale = 1f
+    var minimumScale = 1f
+    var maximumScale = 4f
+
+    //Dimensions
+    private var originalWidth = 0f
+    private var originalHeight = 0f
+    private var mViewedWidth = 0
+    private var mViewedHeight = 0
+    private var lastPoint = PointF()
+    private var startPoint = PointF()
+
+    //Zoom animations
+    private var zoomAnimator: ValueAnimator? = null
+    private val zoomInterpolator = AccelerateDecelerateInterpolator()
+
+    constructor(context: Context) : super(context) {
+        constructionDetails(context)
+    }
+
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        constructionDetails(context)
+    }
+
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    )
+
+    private fun constructionDetails(context: Context) {
         super.setClickable(true)
-        this._context = context
-        mScaleDetector = ScaleGestureDetector(context, ScaleListener())
-        _matrix.setTranslate(1f, 1f)
-        m = FloatArray(9)
-        imageMatrix = _matrix
+        myContext = context
+        myScaleDetector = ScaleGestureDetector(context, ScalingListener())
+        myMatrix = Matrix()
+        matrixValue = FloatArray(10)
+        imageMatrix = myMatrix
         scaleType = ScaleType.MATRIX
-        setOnTouchListener { _, event ->
-            mScaleDetector.onTouchEvent(event)
-            _matrix.getValues(m)
-            val x = m[Matrix.MTRANS_X]
-            val y = m[Matrix.MTRANS_Y]
-            val curr = PointF(event.x, event.y)
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    last[event.x] = event.y
-                    start.set(last)
-                    mode = DRAG
-                }
-
-                MotionEvent.ACTION_POINTER_DOWN -> {
-                    last[event.x] = event.y
-                    start.set(last)
-                    mode = ZOOM
-                }
-
-                MotionEvent.ACTION_MOVE ->                         //if the mode is ZOOM or
-                    //if the mode is DRAG and already zoomed
-                    if (mode == ZOOM || mode == DRAG && saveScale > minScale) {
-                        var deltaX = curr.x - last.x // x difference
-                        var deltaY = curr.y - last.y // y difference
-                        val scaleWidth = (origWidth * saveScale).roundToInt()
-                            .toFloat() // width after applying current scale
-                        val scaleHeight = (origHeight * saveScale).roundToInt()
-                            .toFloat() // height after applying current scale
-                        //if scaleWidth is smaller than the views width
-                        //in other words if the image width fits in the view
-                        //limit left and right movement
-                        if (scaleWidth < width) {
-                            deltaX = 0f
-                            if (y + deltaY > 0) deltaY = -y else if (y + deltaY < -bottom) deltaY =
-                                -(y + bottom)
-                        } else if (scaleHeight < height) {
-                            deltaY = 0f
-                            if (x + deltaX > 0) deltaX = -x else if (x + deltaX < -right) deltaX =
-                                -(x + right)
-                        } else {
-                            if (x + deltaX > 0) deltaX = -x else if (x + deltaX < -right) deltaX =
-                                -(x + right)
-                            if (y + deltaY > 0) deltaY = -y else if (y + deltaY < -bottom) deltaY =
-                                -(y + bottom)
-                        }
-                        //move the image with the matrix
-                        _matrix.postTranslate(deltaX, deltaY)
-                        //set the last touch location to the current
-                        last[curr.x] = curr.y
-                    }
-
-                MotionEvent.ACTION_UP -> {
-                    mode = NONE
-                    val xDiff = abs(curr.x - start.x).toInt()
-                    val yDiff = abs(curr.y - start.y).toInt()
-                    if (xDiff < CLICK && yDiff < CLICK) performClick()
-                }
-
-                MotionEvent.ACTION_POINTER_UP -> mode = NONE
-            }
-            imageMatrix = _matrix
-            invalidate()
-            true
-        }
+        myGestureDetector = GestureDetector(context, this)
+        setOnTouchListener(this)
     }
 
-    override fun setImageBitmap(bm: Bitmap) {
-        super.setImageBitmap(bm)
-        bmWidth = bm.width.toFloat()
-        bmHeight = bm.height.toFloat()
-    }
+    private inner class ScalingListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
-    fun setMaxZoom(x: Float) {
-        maxScale = x
-    }
-
-    private inner class ScaleListener : SimpleOnScaleGestureListener() {
         override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
-            mode = ZOOM
+            zoomMode = ZOOM
             return true
         }
 
         override fun onScale(detector: ScaleGestureDetector): Boolean {
-            var mScaleFactor = detector.scaleFactor
-            val origScale = saveScale
-            saveScale *= mScaleFactor
-            if (saveScale > maxScale) {
-                saveScale = maxScale
-                mScaleFactor = maxScale / origScale
-            } else if (saveScale < minScale) {
-                saveScale = minScale
-                mScaleFactor = minScale / origScale
+            var scaleFactor = detector.scaleFactor
+            val origScale = presentScale
+            presentScale *= scaleFactor
+            if (presentScale > maximumScale) {
+                presentScale = maximumScale
+                scaleFactor = maximumScale / origScale
             }
-            right = width * saveScale - width - 2 * redundantXSpace * saveScale
-            bottom = height * saveScale - height - 2 * redundantYSpace * saveScale
-            if (origWidth * saveScale <= width || origHeight * saveScale <= height) {
-                _matrix.postScale(mScaleFactor, mScaleFactor, width / 2, height / 2)
-                if (mScaleFactor < 1) {
-                    _matrix.getValues(m)
-                    val x = m[Matrix.MTRANS_X]
-                    val y = m[Matrix.MTRANS_Y]
-                    if (mScaleFactor < 1) {
-                        if ((origWidth * saveScale).roundToInt() < width) {
-                            if (y < -bottom) _matrix.postTranslate(
-                                0F,
-                                -(y + bottom)
-                            ) else if (y > 0) _matrix.postTranslate(0F, -y)
-                        } else {
-                            if (x < -right) _matrix.postTranslate(
-                                -(x + right),
-                                0F
-                            ) else if (x > 0) _matrix.postTranslate(-x, 0F)
-                        }
-                    }
-                }
+            if (presentScale < minimumScale) {
+                presentScale = minimumScale
+                scaleFactor = minimumScale / origScale
+            }
+            if (originalWidth * presentScale <= mViewedWidth
+                || originalHeight * presentScale <= mViewedHeight
+            ) {
+                myMatrix?.postScale(
+                    scaleFactor,
+                    scaleFactor,
+                    mViewedWidth / 2f,
+                    mViewedHeight / 2f
+                )
             } else {
-                _matrix.postScale(mScaleFactor, mScaleFactor, detector.focusX, detector.focusY)
-                _matrix.getValues(m)
-                val x = m[Matrix.MTRANS_X]
-                val y = m[Matrix.MTRANS_Y]
-                if (mScaleFactor < 1) {
-                    if (x < -right) _matrix.postTranslate(
-                        -(x + right),
-                        0F
-                    ) else if (x > 0) _matrix.postTranslate(-x, 0F)
-                    if (y < -bottom) _matrix.postTranslate(
-                        0F,
-                        -(y + bottom)
-                    ) else if (y > 0) _matrix.postTranslate(0F, -y)
-                }
+                myMatrix?.postScale(
+                    scaleFactor,
+                    scaleFactor,
+                    detector.focusX,
+                    detector.focusY
+                )
             }
+            fittedTranslation()
             return true
+
         }
+
+    }
+
+    private fun putToScreen() {
+        presentScale = 1f
+        val factor: Float
+        val mDrawable = drawable
+        if (mDrawable == null || mDrawable.intrinsicWidth == 0 || mDrawable.intrinsicHeight == 0) return
+        val mImageWidth = mDrawable.intrinsicWidth
+        val mImageHeight = mDrawable.intrinsicHeight
+        val factorX = mViewedWidth.toFloat() / mImageWidth.toFloat()
+        val factorY = mViewedHeight.toFloat() / mImageHeight.toFloat()
+        factor = factorX.coerceAtMost(factorY)
+        myMatrix?.setScale(factor, factor)
+
+        // Centering the image
+        var repeatedYSpace = (mViewedHeight.toFloat()
+                - factor * mImageHeight.toFloat())
+        var repeatedXSpace = (mViewedWidth.toFloat()
+                - factor * mImageWidth.toFloat())
+        repeatedYSpace /= 2.toFloat()
+        repeatedXSpace /= 2.toFloat()
+        myMatrix?.postTranslate(repeatedXSpace, repeatedYSpace)
+        originalWidth = mViewedWidth - 2 * repeatedXSpace
+        originalHeight = mViewedHeight - 2 * repeatedYSpace
+        imageMatrix = myMatrix
+    }
+
+    fun fittedTranslation() {
+        myMatrix?.getValues(matrixValue)
+        val translationX = matrixValue!![Matrix.MTRANS_X]
+        val translationY = matrixValue!![Matrix.MTRANS_Y]
+        val fittedTransX =
+            getFittedTranslation(
+                translationX,
+                mViewedWidth.toFloat(),
+                originalWidth * presentScale
+            )
+        val fittedTransY = getFittedTranslation(
+            translationY,
+            mViewedHeight.toFloat(),
+            originalHeight * presentScale
+        )
+        if (fittedTransX != 0f || fittedTransY != 0f)
+            myMatrix?.postTranslate(
+                fittedTransX,
+                fittedTransY
+            )
+    }
+
+    private fun getFittedTranslation(mTranslate: Float, vSize: Float, cSize: Float): Float {
+        val minimumTranslation: Float
+        val maximumTranslation: Float
+        if (cSize <= vSize) {
+            minimumTranslation = 0f
+            maximumTranslation = vSize - cSize
+        } else {
+            minimumTranslation = vSize - cSize
+            maximumTranslation = 0f
+        }
+        if (mTranslate < minimumTranslation) {
+            return -mTranslate + minimumTranslation
+        }
+        if (mTranslate > maximumTranslation) {
+            return -mTranslate + maximumTranslation
+        }
+        return 0F
+    }
+
+    private fun getFixDragTrans(delta: Float, viewedSize: Float, detailSize: Float): Float {
+        return if (detailSize <= viewedSize) {
+            0F
+        } else delta
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        width = MeasureSpec.getSize(widthMeasureSpec).toFloat()
-        height = MeasureSpec.getSize(heightMeasureSpec).toFloat()
-        //Fit to screen.
-        val scale: Float
-        val scaleX = width / bmWidth
-        val scaleY = height / bmHeight
-        scale = scaleX.coerceAtMost(scaleY)
-        _matrix.setScale(scale, scale)
-        imageMatrix = _matrix
-        saveScale = 1f
-
-        // Center the image
-        redundantYSpace = height - scale * bmHeight
-        redundantXSpace = width - scale * bmWidth
-        redundantYSpace /= 2f
-        redundantXSpace /= 2f
-        _matrix.postTranslate(redundantXSpace, redundantYSpace)
-        origWidth = width - 2 * redundantXSpace
-        origHeight = height - 2 * redundantYSpace
-        right = width * saveScale - width - 2 * redundantXSpace * saveScale
-        bottom = height * saveScale - height - 2 * redundantYSpace * saveScale
-        imageMatrix = _matrix
+        mViewedWidth = MeasureSpec.getSize(widthMeasureSpec)
+        mViewedHeight = MeasureSpec.getSize(heightMeasureSpec)
+        if (presentScale == 1f) {
+            // Merged onto the Screen
+            putToScreen()
+        }
     }
+
+    override fun onTouch(mView: View, mMouseEvent: MotionEvent): Boolean {
+        myScaleDetector?.onTouchEvent(mMouseEvent)
+        myGestureDetector?.onTouchEvent(mMouseEvent)
+        val currentPoint = PointF(mMouseEvent.x, mMouseEvent.y)
+
+        when (mMouseEvent.action) {
+            MotionEvent.ACTION_DOWN -> {
+                lastPoint.set(currentPoint)
+                startPoint.set(lastPoint)
+                zoomMode = DRAG
+            }
+
+            MotionEvent.ACTION_MOVE -> if (zoomMode == DRAG) {
+                val changeInX = currentPoint.x - lastPoint.x
+                val changeInY = currentPoint.y - lastPoint.y
+                val fixedTranslationX =
+                    getFixDragTrans(changeInX, mViewedWidth.toFloat(), originalWidth * presentScale)
+                val fixedTranslationY = getFixDragTrans(
+                    changeInY,
+                    mViewedHeight.toFloat(),
+                    originalHeight * presentScale
+                )
+                myMatrix?.postTranslate(fixedTranslationX, fixedTranslationY)
+                fittedTranslation()
+                lastPoint[currentPoint.x] = currentPoint.y
+            }
+
+            MotionEvent.ACTION_POINTER_UP -> zoomMode = NONE
+        }
+        imageMatrix = myMatrix
+        return false
+    }
+
+    override fun onDoubleTap(e: MotionEvent): Boolean {
+        // Double tap is detected
+        val origScale = presentScale
+        val scaleFactor: Float
+        var x = e.x
+        var y = e.y
+        if (presentScale >= maximumScale) {
+            presentScale = minimumScale
+            scaleFactor = minimumScale / origScale
+            x = mViewedWidth / 2f
+            y = mViewedHeight / 2f
+        } else {
+            presentScale *= 2
+            scaleFactor = presentScale / origScale
+        }
+        myMatrix?.postScale(
+            scaleFactor,
+            scaleFactor,
+            x,
+            y
+        )
+        fittedTranslation()
+        return false
+    }
+
+    override fun onDown(p0: MotionEvent) = false
+    override fun onShowPress(p0: MotionEvent) {}
+    override fun onSingleTapUp(p0: MotionEvent) = false
+    override fun onScroll(p0: MotionEvent, p1: MotionEvent, p2: Float, p3: Float) = false
+    override fun onLongPress(p0: MotionEvent) {}
+    override fun onFling(p0: MotionEvent, p1: MotionEvent, p2: Float, p3: Float) = false
+    override fun onSingleTapConfirmed(p0: MotionEvent) = false
+    override fun onDoubleTapEvent(p0: MotionEvent) = false
 
     companion object {
         const val NONE = 0
         const val DRAG = 1
         const val ZOOM = 2
-        const val CLICK = 3
     }
+
 }
