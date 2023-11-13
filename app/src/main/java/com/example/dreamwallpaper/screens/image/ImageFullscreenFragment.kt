@@ -72,6 +72,7 @@ class ImageFullscreenFragment : Fragment() {
         setHasOptionsMenu(true)
         init()
         registerForActivityResult()
+        swipeImage()
     }
 
     override fun onCreateView(
@@ -81,6 +82,13 @@ class ImageFullscreenFragment : Fragment() {
         mBinding = FragmentFullscreenImageBinding.inflate(layoutInflater, container, false)
         currentImage = arguments?.getSerializable(IMAGE) as Hit
         return binding.root
+    }
+
+    private fun swipeImage() {
+        binding.fullscreenImage.apply {
+            swipeToDismissEnabled = true
+            onDismiss = { findNavController().popBackStack() }
+        }
     }
 
     private fun downloadImage() {
@@ -168,12 +176,14 @@ class ImageFullscreenFragment : Fragment() {
         )
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
         inflater.inflate(R.menu.menu_image_fullscreen, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.actionDownloadImage -> {

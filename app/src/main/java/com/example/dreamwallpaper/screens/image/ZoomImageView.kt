@@ -1,267 +1,446 @@
 package com.example.dreamwallpaper.screens.image
 
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Matrix
-import android.graphics.PointF
+import android.graphics.*
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
-import android.view.View
+import android.view.ViewConfiguration
 import android.view.animation.AccelerateDecelerateInterpolator
-import androidx.appcompat.widget.AppCompatImageView
+import android.view.animation.DecelerateInterpolator
+import android.widget.OverScroller
+import androidx.core.animation.doOnCancel
+import androidx.core.animation.doOnEnd
+import androidx.core.view.ViewCompat
+import kotlin.math.absoluteValue
 
-class ZoomImageView : AppCompatImageView, View.OnTouchListener,
-    GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
+class ZoomImageView : androidx.appcompat.widget.AppCompatImageView {
 
-    //Construction details
-    private var myContext: Context? = null
-    private var myScaleDetector: ScaleGestureDetector? = null
-    private var myGestureDetector: GestureDetector? = null
-    private var myMatrix: Matrix? = null
-    private var matrixValue: FloatArray? = null
-    private var zoomMode = NONE
-
-    //Scales
-    var presentScale = 1f
-    var minimumScale = 1f
-    var maximumScale = 4f
-
-    //Dimensions
-    private var originalWidth = 0f
-    private var originalHeight = 0f
-    private var mViewedWidth = 0
-    private var mViewedHeight = 0
-    private var lastPoint = PointF()
-    private var startPoint = PointF()
-
-    //Zoom animations
-    private var zoomAnimator: ValueAnimator? = null
+    private val textPaint = Paint()
+    private val zoomMatrix = Matrix()
+    private val baseMatrix = Matrix()
+    private val preEventImgRect = RectF()
+    private val matrixValues = FloatArray(9)
     private val zoomInterpolator = AccelerateDecelerateInterpolator()
+    private var logText = ""
+    private var handlingDismiss = false
+    private var touchSlop: Float = 0F
+    private var oldScale = MIN_SCALE
+    private var panAnimator: ValueAnimator? = null
+    private var zoomAnimator: ValueAnimator? = null
+    private var onClickListener: OnClickListener? = null
+    private var onLongClickListener: OnLongClickListener? = null
+    private var viewWidth = right - left - paddingLeft - paddingRight
+    private var viewHeight = bottom - top - paddingTop - paddingBottom
+    private lateinit var scroller: OverScroller
+    private lateinit var tapDetector: GestureDetector
+    private lateinit var scaleDetector: ScaleGestureDetector
+    var debugInfoVisible = false
+    var swipeToDismissEnabled = false
+    var disallowPagingWhenZoomed = false
+    var onDismiss: () -> Unit = {}
+    var onDrawableLoaded: () -> Unit = {}
+    var dismissProgressListener: (progress: Float) -> Unit = {}
 
     constructor(context: Context) : super(context) {
-        constructionDetails(context)
+        initView()
     }
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        constructionDetails(context)
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
+        initView()
     }
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    )
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
+        context, attrs, defStyleAttr
+    ) {
+        initView()
+    }
 
-    private fun constructionDetails(context: Context) {
-        super.setClickable(true)
-        myContext = context
-        myScaleDetector = ScaleGestureDetector(context, ScalingListener())
-        myMatrix = Matrix()
-        matrixValue = FloatArray(10)
-        imageMatrix = myMatrix
+    private fun initView() {
+        touchSlop = ViewConfiguration.get(context).scaledTouchSlop.toFloat()
+        initTextPaint()
         scaleType = ScaleType.MATRIX
-        myGestureDetector = GestureDetector(context, this)
-        setOnTouchListener(this)
+        scaleDetector = ScaleGestureDetector(context, scaleListener)
+        scroller = OverScroller(context, DecelerateInterpolator())
+        tapDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+
+            override fun onDoubleTap(e: MotionEvent): Boolean {
+                oldScale = currentScale
+                val scaleFactor =
+                    if (currentScale != MIN_SCALE && currentScale != MID_SCALE) MIN_SCALE
+                    else if (currentScale == MID_SCALE) {
+                        MAX_SCALE
+                    } else {
+                        MID_SCALE
+                    }
+                setScaleAbsolute(scaleFactor, e.x, e.y)
+                return true
+            }
+
+            override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+                onClickListener?.onClick(this@ZoomImageView)
+                return true
+            }
+
+            override fun onLongPress(e: MotionEvent) {
+                onLongClickListener?.onLongClick(this@ZoomImageView)
+            }
+
+            override fun onScroll(
+                e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float
+            ): Boolean {
+                if (scaleDetector.isInProgress) return false
+                val xAbs = distanceX.absoluteValue
+                val yAbs = distanceY.absoluteValue
+                if (currentScale <= MIN_SCALE) {
+                    if (swipeToDismissEnabled && yAbs > xAbs) {
+                        handlingDismiss = true
+                        panImage(0F, distanceY)
+                        dismissProgressListener.invoke(dismissProgress)
+                    }
+                } else {
+                    panImage(distanceX, distanceY)
+                }
+                var disallowParentIntercept = true
+                if (!disallowPagingWhenZoomed) {
+                    if (handlingDismiss) {
+                        disallowParentIntercept = true
+                    } else if (xAbs > yAbs) {
+                        // horizontal scroll
+                        if (distanceX > 0F && preEventImgRect.right == viewWidth.toFloat())
+                            disallowParentIntercept = false
+                        else if (distanceX < 0F && preEventImgRect.left == 0F)
+                            disallowParentIntercept = false
+                    } else {
+                        // vertical scroll
+                        if (distanceY > 0F && preEventImgRect.bottom == viewHeight.toFloat())
+                            disallowParentIntercept = false
+                        else if (distanceY < 0F && preEventImgRect.top == 0F)
+                            disallowParentIntercept = false
+                    }
+                }
+                parent?.requestDisallowInterceptTouchEvent(disallowParentIntercept)
+                return (xAbs > touchSlop || yAbs > touchSlop)
+            }
+
+            override fun onFling(
+                e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float
+            ): Boolean {
+                if (currentZoom <= MIN_SCALE) return false
+                val maxX = (preEventImgRect.width() - viewWidth).toInt()
+                val maxY = (preEventImgRect.height() - viewHeight).toInt()
+                flingRunnable.lastX = -preEventImgRect.left
+                flingRunnable.lastY = -preEventImgRect.top
+                scroller.fling(
+                    flingRunnable.lastX.toInt(), flingRunnable.lastY.toInt(), -velocityX.toInt(),
+                    -velocityY.toInt(), 0, maxX, 0, maxY
+                )
+                ViewCompat.postOnAnimation(this@ZoomImageView, flingRunnable)
+                return true
+            }
+
+            override fun onDown(e: MotionEvent): Boolean {
+                removeCallbacks(flingRunnable)
+                scroller.forceFinished(true)
+                displayRect?.let {
+                    preEventImgRect.set(it)
+                }
+                panAnimator?.removeAllUpdateListeners()
+                panAnimator?.cancel()
+                return true
+            }
+        })
     }
 
-    private inner class ScalingListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-
-        override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
-            zoomMode = ZOOM
-            return true
+    private val flingRunnable = object : Runnable {
+        var lastX = 0F
+        var lastY = 0F
+        override fun run() {
+            if (!scroller.isFinished && scroller.computeScrollOffset()) {
+                val curX = scroller.currX.toFloat()
+                val curY = scroller.currY.toFloat()
+                panImage((curX - lastX), (curY - lastY))
+                lastX = curX
+                lastY = curY
+                ViewCompat.postOnAnimation(this@ZoomImageView, this)
+            }
         }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+
+        val disallowIntercept =
+            currentScale > MIN_SCALE || scaleDetector.isInProgress || handlingDismiss
+        if (event.action == MotionEvent.ACTION_UP) {
+            if (handlingDismiss) {
+                if (currentTransY.absoluteValue > dismissThreshold) {
+                    onDismiss.invoke()
+                } else {
+                    animatePan(0F, currentTransY, 0F, 0F, dismissProgress)
+                }
+            }
+        }
+        parent?.requestDisallowInterceptTouchEvent(disallowIntercept)
+        return tapDetector.onTouchEvent(event) || return scaleDetector.onTouchEvent(event) || return true
+    }
+
+    private fun setZoom(scale: Float, x: Float, y: Float) {
+        zoomMatrix.postScale(scale, scale, x, y)
+        setBounds()
+        updateMatrix(drawMatrix)
+    }
+
+    private fun updateMatrix(drawMatrix: Matrix) {
+        logText = "tX: $currentTransX tY: $currentTransY"
+        logText += " Scale: $currentScale"
+        imageMatrix = drawMatrix
+    }
+
+    private fun setScale(scale: Float, x: Float, y: Float) {
+        setZoom(scale, x, y)
+    }
+
+    private fun setScaleAbsolute(scale: Float, x: Float, y: Float) {
+        val zoom = when {
+            scale > MAX_SCALE -> MAX_SCALE
+            scale < MIN_SCALE -> MIN_SCALE
+            else -> scale
+        }
+        cancelAnimation()
+        animateZoom(oldScale, zoom, x, y)
+    }
+
+    private inline val drawableWidth: Int
+        get() = drawable?.intrinsicWidth ?: 0
+
+    private inline val drawableHeight: Int
+        get() = drawable?.intrinsicHeight ?: 0
+
+    override fun setImageDrawable(drawable: Drawable?) {
+        super.setImageDrawable(drawable)
+        if (drawable != null) {
+            onDrawableLoaded.invoke()
+            resetZoom()
+            zoomMatrix.set(imageMatrix)
+        }
+    }
+
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.onLayout(changed, left, top, right, bottom)
+        viewWidth = right - left - paddingLeft - paddingRight
+        viewHeight = bottom - top - paddingTop - paddingBottom
+        if (changed) resetZoom()
+    }
+
+    fun resetZoom() {
+        val tempSrc = RectF(0F, 0F, drawableWidth.toFloat(), drawableHeight.toFloat())
+        val tempDst = RectF(0F, 0F, viewWidth.toFloat(), viewHeight.toFloat())
+        baseMatrix.setRectToRect(tempSrc, tempDst, Matrix.ScaleToFit.CENTER)
+        setScaleAbsolute(MIN_SCALE, viewWidth / 2F, viewHeight / 2F)
+        imageMatrix = baseMatrix
+    }
+
+    private val scaleListener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
         override fun onScale(detector: ScaleGestureDetector): Boolean {
-            var scaleFactor = detector.scaleFactor
-            val origScale = presentScale
-            presentScale *= scaleFactor
-            if (presentScale > maximumScale) {
-                presentScale = maximumScale
-                scaleFactor = maximumScale / origScale
-            }
-            if (presentScale < minimumScale) {
-                presentScale = minimumScale
-                scaleFactor = minimumScale / origScale
-            }
-            if (originalWidth * presentScale <= mViewedWidth
-                || originalHeight * presentScale <= mViewedHeight
-            ) {
-                myMatrix?.postScale(
-                    scaleFactor,
-                    scaleFactor,
-                    mViewedWidth / 2f,
-                    mViewedHeight / 2f
-                )
-            } else {
-                myMatrix?.postScale(
-                    scaleFactor,
-                    scaleFactor,
-                    detector.focusX,
-                    detector.focusY
-                )
-            }
-            fittedTranslation()
+            if (detector.scaleFactor.isNaN() || detector.scaleFactor.isInfinite())
+                return false
+            if (currentScale > MAX_SCALE && detector.scaleFactor > 1F)
+                return false
+            oldScale = currentScale
+            setScale(detector.scaleFactor, detector.focusX, detector.focusY)
             return true
-
         }
 
-    }
-
-    private fun putToScreen() {
-        presentScale = 1f
-        val factor: Float
-        val mDrawable = drawable
-        if (mDrawable == null || mDrawable.intrinsicWidth == 0 || mDrawable.intrinsicHeight == 0) return
-        val mImageWidth = mDrawable.intrinsicWidth
-        val mImageHeight = mDrawable.intrinsicHeight
-        val factorX = mViewedWidth.toFloat() / mImageWidth.toFloat()
-        val factorY = mViewedHeight.toFloat() / mImageHeight.toFloat()
-        factor = factorX.coerceAtMost(factorY)
-        myMatrix?.setScale(factor, factor)
-
-        // Centering the image
-        var repeatedYSpace = (mViewedHeight.toFloat()
-                - factor * mImageHeight.toFloat())
-        var repeatedXSpace = (mViewedWidth.toFloat()
-                - factor * mImageWidth.toFloat())
-        repeatedYSpace /= 2.toFloat()
-        repeatedXSpace /= 2.toFloat()
-        myMatrix?.postTranslate(repeatedXSpace, repeatedYSpace)
-        originalWidth = mViewedWidth - 2 * repeatedXSpace
-        originalHeight = mViewedHeight - 2 * repeatedYSpace
-        imageMatrix = myMatrix
-    }
-
-    fun fittedTranslation() {
-        myMatrix?.getValues(matrixValue)
-        val translationX = matrixValue!![Matrix.MTRANS_X]
-        val translationY = matrixValue!![Matrix.MTRANS_Y]
-        val fittedTransX =
-            getFittedTranslation(
-                translationX,
-                mViewedWidth.toFloat(),
-                originalWidth * presentScale
-            )
-        val fittedTransY = getFittedTranslation(
-            translationY,
-            mViewedHeight.toFloat(),
-            originalHeight * presentScale
-        )
-        if (fittedTransX != 0f || fittedTransY != 0f)
-            myMatrix?.postTranslate(
-                fittedTransX,
-                fittedTransY
-            )
-    }
-
-    private fun getFittedTranslation(mTranslate: Float, vSize: Float, cSize: Float): Float {
-        val minimumTranslation: Float
-        val maximumTranslation: Float
-        if (cSize <= vSize) {
-            minimumTranslation = 0f
-            maximumTranslation = vSize - cSize
-        } else {
-            minimumTranslation = vSize - cSize
-            maximumTranslation = 0f
-        }
-        if (mTranslate < minimumTranslation) {
-            return -mTranslate + minimumTranslation
-        }
-        if (mTranslate > maximumTranslation) {
-            return -mTranslate + maximumTranslation
-        }
-        return 0F
-    }
-
-    private fun getFixDragTrans(delta: Float, viewedSize: Float, detailSize: Float): Float {
-        return if (detailSize <= viewedSize) {
-            0F
-        } else delta
-    }
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        mViewedWidth = MeasureSpec.getSize(widthMeasureSpec)
-        mViewedHeight = MeasureSpec.getSize(heightMeasureSpec)
-        if (presentScale == 1f) {
-            // Merged onto the Screen
-            putToScreen()
+        override fun onScaleEnd(detector: ScaleGestureDetector) {
+            super.onScaleEnd(detector)
+            oldScale = currentScale
+            var needsReset = false
+            var newScale = MIN_SCALE
+            if (currentScale < MIN_SCALE) {
+                newScale = MIN_SCALE
+                needsReset = true
+            }
+            if (needsReset) setScaleAbsolute(newScale, detector.focusX, detector.focusY)
         }
     }
 
-    override fun onTouch(mView: View, mMouseEvent: MotionEvent): Boolean {
-        myScaleDetector?.onTouchEvent(mMouseEvent)
-        myGestureDetector?.onTouchEvent(mMouseEvent)
-        val currentPoint = PointF(mMouseEvent.x, mMouseEvent.y)
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+        if (debugInfoVisible) {
+            canvas.drawText(logText, 10F, height - 10F, textPaint)
+            val drawableBound = displayRect?.let {
+                "Drawable: $it"
+            } ?: ""
+            canvas.drawText(drawableBound, 10F, 40F, textPaint)
+        }
+    }
 
-        when (mMouseEvent.action) {
-            MotionEvent.ACTION_DOWN -> {
-                lastPoint.set(currentPoint)
-                startPoint.set(lastPoint)
-                zoomMode = DRAG
+    private fun initTextPaint() {
+        textPaint.color = Color.WHITE
+        textPaint.style = Paint.Style.FILL
+        textPaint.textSize = 40F
+    }
+
+    private fun animateZoom(startZoom: Float, endZoom: Float, x: Float, y: Float) {
+        zoomAnimator = ValueAnimator.ofFloat(startZoom, endZoom).apply {
+            duration = VALUE_ANIMATOR_DURATION
+            addUpdateListener {
+                val scale = (it.animatedValue as Float) / currentScale
+                setZoom(scale, x, y)
+            }
+            interpolator = zoomInterpolator
+            start()
+        }
+    }
+
+    private fun animatePan(
+        startX: Float, startY: Float, endX: Float, endY: Float, dismissProgress: Float? = null
+    ) {
+        panAnimator = ValueAnimator.ofFloat(startX, startY, endX, endY).apply {
+            duration = VALUE_ANIMATOR_DURATION
+            addUpdateListener {
+                val newX = (startX - endX) * it.animatedFraction
+                val newY = (startY - endY) * it.animatedFraction
+                panImage(startX - newX, startY - newY, setAbsolute = true)
+                dismissProgress?.let { progress ->
+                    if (1.0F - it.animatedFraction < progress) {
+                        dismissProgressListener.invoke(1.0F - it.animatedFraction)
+                    }
+                }
+            }
+            interpolator = zoomInterpolator
+            start()
+            doOnCancel {
+                panImage(0F, 0F, setAbsolute = true)
+                handlingDismiss = false
+            }
+            doOnEnd {
+                handlingDismiss = false
+            }
+        }
+    }
+
+    private fun cancelAnimation() {
+        zoomAnimator?.removeAllUpdateListeners()
+        zoomAnimator?.cancel()
+    }
+
+    private fun panImage(x: Float, y: Float, setAbsolute: Boolean = false) {
+        if (setAbsolute)
+            zoomMatrix.setTranslate(x, y)
+        else
+            zoomMatrix.postTranslate(-x, -y)
+        setBounds()
+        updateMatrix(drawMatrix)
+    }
+
+    private fun setBounds() {
+        val rect = displayRect ?: return
+        val height = rect.height()
+        val width = rect.width()
+        val viewHeight: Int = this.viewHeight
+        var deltaX = 0f
+        var deltaY = 0f
+        when {
+            height <= viewHeight -> {
+                if (!handlingDismiss)
+                    deltaY = (viewHeight - height) / 2 - rect.top
             }
 
-            MotionEvent.ACTION_MOVE -> if (zoomMode == DRAG) {
-                val changeInX = currentPoint.x - lastPoint.x
-                val changeInY = currentPoint.y - lastPoint.y
-                val fixedTranslationX =
-                    getFixDragTrans(changeInX, mViewedWidth.toFloat(), originalWidth * presentScale)
-                val fixedTranslationY = getFixDragTrans(
-                    changeInY,
-                    mViewedHeight.toFloat(),
-                    originalHeight * presentScale
+            rect.top > 0 -> {
+                deltaY = -rect.top
+            }
+
+            rect.bottom < viewHeight -> {
+                deltaY = viewHeight - rect.bottom
+            }
+        }
+        val viewWidth: Int = this.viewWidth
+        when {
+            width <= viewWidth -> {
+                deltaX = (viewWidth - width) / 2 - rect.left
+            }
+
+            rect.left > 0 -> {
+                deltaX = -rect.left
+            }
+
+            rect.right < viewWidth -> {
+                deltaX = viewWidth - rect.right
+            }
+        }
+        zoomMatrix.postTranslate(deltaX, deltaY)
+    }
+
+    private inline val dismissThreshold: Float
+        get() = viewHeight / 3F
+
+    private inline val currentScale: Float
+        get() {
+            zoomMatrix.getValues(matrixValues)
+            return matrixValues[Matrix.MSCALE_X]
+        }
+
+    private inline val currentTransX: Float
+        get() {
+            zoomMatrix.getValues(matrixValues)
+            return matrixValues[Matrix.MTRANS_X]
+        }
+
+    private inline val currentTransY: Float
+        get() {
+            zoomMatrix.getValues(matrixValues)
+            return matrixValues[Matrix.MTRANS_Y]
+        }
+
+    private inline val dismissProgress: Float
+        get() = currentTransY.absoluteValue / dismissThreshold
+
+    private val displayRect: RectF? = RectF()
+        get() {
+            drawable?.let { d ->
+                field?.set(
+                    0f, 0f, d.intrinsicWidth.toFloat(), d.intrinsicHeight.toFloat()
                 )
-                myMatrix?.postTranslate(fixedTranslationX, fixedTranslationY)
-                fittedTranslation()
-                lastPoint[currentPoint.x] = currentPoint.y
+                drawMatrix.mapRect(field)
+                return field
             }
-
-            MotionEvent.ACTION_POINTER_UP -> zoomMode = NONE
+            return null
         }
-        imageMatrix = myMatrix
-        return false
-    }
 
-    override fun onDoubleTap(e: MotionEvent): Boolean {
-        // Double tap is detected
-        val origScale = presentScale
-        val scaleFactor: Float
-        var x = e.x
-        var y = e.y
-        if (presentScale >= maximumScale) {
-            presentScale = minimumScale
-            scaleFactor = minimumScale / origScale
-            x = mViewedWidth / 2f
-            y = mViewedHeight / 2f
-        } else {
-            presentScale *= 2
-            scaleFactor = presentScale / origScale
+    private val drawMatrix: Matrix = Matrix()
+        get() {
+            field.set(baseMatrix)
+            field.postConcat(zoomMatrix)
+            return field
         }
-        myMatrix?.postScale(
-            scaleFactor,
-            scaleFactor,
-            x,
-            y
-        )
-        fittedTranslation()
-        return false
-    }
 
-    override fun onDown(p0: MotionEvent) = false
-    override fun onShowPress(p0: MotionEvent) {}
-    override fun onSingleTapUp(p0: MotionEvent) = false
-    override fun onScroll(p0: MotionEvent, p1: MotionEvent, p2: Float, p3: Float) = false
-    override fun onLongPress(p0: MotionEvent) {}
-    override fun onFling(p0: MotionEvent, p1: MotionEvent, p2: Float, p3: Float) = false
-    override fun onSingleTapConfirmed(p0: MotionEvent) = false
-    override fun onDoubleTapEvent(p0: MotionEvent) = false
+    var currentZoom: Float
+        get() = currentScale
+        set(value) {
+            oldScale = currentScale
+            setScaleAbsolute(value, viewWidth / 2F, viewHeight / 2F)
+        }
 
     companion object {
-        const val NONE = 0
-        const val DRAG = 1
-        const val ZOOM = 2
+        const val MAX_SCALE = 4F
+        const val MIN_SCALE = 1F
+        const val MID_SCALE = 2F
+        private const val VALUE_ANIMATOR_DURATION = 300L
+    }
+
+    override fun setOnClickListener(l: OnClickListener?) {
+        this.onClickListener = l
+    }
+
+    override fun setOnLongClickListener(l: OnLongClickListener?) {
+        this.onLongClickListener = l
     }
 
 }

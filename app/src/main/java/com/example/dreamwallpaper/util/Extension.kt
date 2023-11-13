@@ -43,7 +43,7 @@ fun Fragment.showAlert(
     message: String,
     onClick: () -> Unit = { }
 ) {
-    AlertDialog.Builder(requireContext())
+    AlertDialog.Builder(requireContext(), R.style.CustomAlertDialog)
         .setTitle(title)
         .setMessage(message)
         .setPositiveButton(R.string.yes) { _, _ ->
