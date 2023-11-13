@@ -24,13 +24,11 @@
 
     <style name="CustomAlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
         <!-- buttons -->
-        <item name="colorAccent">@color/white</item>
+        <item name="colorAccent">?attr/colorPrimaryVariant</item>
         <!-- title and text -->
-        <item name="android:textColorPrimary">@color/white</item>
-        <!-- background you can change some other color than white -->
-        <item name="android:background">@color/blackLite_200</item>
-        <!-- change if you want below -->
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorPrimary">?attr/colorPrimaryVariant</item>
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="android:textColor">?attr/colorPrimaryVariant</item>
     </style>
 
 </resources>

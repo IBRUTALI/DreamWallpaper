@@ -6,8 +6,8 @@
         <item name="colorPrimaryVariant">@color/white_lite</item>
         <item name="colorOnPrimary">#D6D6D6</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/orange_lite</item>
-        <item name="colorSecondaryVariant">@color/orange_lite</item>
+        <item name="colorSecondary">@color/orange</item>
+        <item name="colorSecondaryVariant">@color/orange</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Action bar. -->
         <item name="android:windowNoTitle">true</item>
@@ -20,25 +20,14 @@
         <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 
-    <style name="CustomAlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
-        <!-- buttons -->
-        <item name="colorAccent">@color/white</item>
-        <!-- title and text -->
-        <item name="android:textColorPrimary">@color/white</item>
-        <!-- background you can change some other color than white -->
-        <item name="android:background">@color/blackLite_200</item>
-        <!-- change if you want below -->
-        <item name="android:textColor">@color/white</item>
-    </style>
-
     <style name="Theme.DreamWallpaper.ActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/blackLite_200</item>
         <item name="colorPrimaryVariant">@color/white_lite</item>
         <item name="colorOnPrimary">#D6D6D6</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/orange_lite</item>
-        <item name="colorSecondaryVariant">@color/orange_lite</item>
+        <item name="colorSecondary">@color/orange</item>
+        <item name="colorSecondaryVariant">@color/orange</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Action bar. -->
         <item name="android:windowNoTitle">true</item>
@@ -48,5 +37,7 @@
         <item name="android:windowLightStatusBar">false</item>
         <!-- Navigation bar color. -->
         <item name="android:navigationBarColor">@android:color/transparent</item>
+        <!-- Alert dialog. -->
+        <item name="alertDialogTheme">@style/CustomAlertDialog</item>
     </style>
 </resources>

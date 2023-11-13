@@ -48,7 +48,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/orange_lite"
+        app:tint="@color/orange"
         tools:visibility="visible" />
 
     <com.google.android.material.tabs.TabLayout
@@ -77,7 +77,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/pagingTab"
         app:pressedTranslationZ="0dp"
-        app:tint="@color/orange_lite"
+        app:tint="@color/orange"
         tools:visibility="visible" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -95,7 +95,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/pagingTab"
         app:pressedTranslationZ="0dp"
-        app:tint="@color/orange_lite" />
+        app:tint="@color/orange" />
 
     <TextView
         android:id="@+id/currentPage"
