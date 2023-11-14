@@ -26,6 +26,7 @@
 </p>
 
 Изображение можно зумить. Реализован **DoubleTap** для зума, свайп вверх для **закрытие** экрана с изображением и плавные анимации для зума с помощью **ValueAnimator**.
+Функционал зума сделан с помощью **CustomView**, которая наследуется от ImageView.
 <p align="center">
   <img src="https://github.com/IBRUTALI/DreamWallpaper/assets/96013243/1117066c-005a-444c-b5e4-dc4da47c82f2" width="250" height="525" />
   <h4 align="center">Зуминг изображения</h4>
